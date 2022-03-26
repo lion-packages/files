@@ -1,0 +1,18 @@
+{
+    "name": "lion-framework/lion-files",
+    "description": "Library created with the function of working internal system files.",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "LionFiles\\": "src/LionFiles/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Sergio León",
+            "email": "sergioleon4004@hotmail.com"
+        }
+    ],
+    "require": {}
+}
