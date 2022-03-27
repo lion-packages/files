@@ -7,4 +7,4 @@ composer require lion-framework/lion-files
 ```
 
 ## License
-Copyright © 2022 [MIT License](https://github.com/Sleon4/Lion-Mailer/blob/main/LICENSE)
+Copyright © 2022 [MIT License](https://github.com/Sleon4/Lion-Files/blob/main/LICENSE)
