@@ -41,15 +41,19 @@ class FILES {
 		return true;
 	}
 
-	public static function rename(string $file): string {
-		return date('Y-m-d') . "-" . md5(hash('sha256', uniqid())) . "." . self::getExtension($file);
+	public static function rename(string $file, ?string $indicative = null): string {
+		if ($indicative != null) {
+			return "{$indicative}-" . md5(hash('sha256', uniqid())) . "." . self::getExtension($file);
+		} else {
+			return md5(hash('sha256', uniqid())) . "." . self::getExtension($file);
+		}
 	}
 
-	public static function upload(array $tmps, array $names, string $path): bool {
+	public static function upload(array $tmps, array $names, string $path, ?string $indicative = null): bool {
 		self::folder($path);
 
 		foreach ($names as $key => $name) {
-			if (!move_uploaded_file($tmps[$key], $path . self::rename($name))) {
+			if (!move_uploaded_file($tmps[$key], $path . self::rename($name, $indicative))) {
 				return false;
 				break;
 			}
