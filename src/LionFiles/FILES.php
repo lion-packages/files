@@ -49,11 +49,11 @@ class FILES {
 		}
 	}
 
-	public static function upload(array $tmps, array $names, string $path, ?string $indicative = null): bool {
+	public static function upload(array $tmps, array $names, string $path): bool {
 		self::folder($path);
 
 		foreach ($names as $key => $name) {
-			if (!move_uploaded_file($tmps[$key], $path . self::rename($name, $indicative))) {
+			if (!move_uploaded_file($tmps[$key], $path . $name)) {
 				return false;
 				break;
 			}
