@@ -4,6 +4,8 @@ namespace LionFiles;
 
 class FILES {
 
+	private static string $url_path = "resources/upload_files/";
+
 	public function __construct() {
 
 	}
@@ -49,11 +51,11 @@ class FILES {
 		}
 	}
 
-	public static function upload(array $tmps, array $names, string $path): bool {
-		self::folder($path);
+	public static function upload(array $tmps, array $names, ?string $path = null): bool {
+		self::folder($path === null ? self::$url_path : $path);
 
 		foreach ($names as $key => $name) {
-			if (!move_uploaded_file($tmps[$key], $path . $name)) {
+			if (!move_uploaded_file($tmps[$key], ($path === null ? self::$url_path : $path) . $name)) {
 				return false;
 				break;
 			}
@@ -62,19 +64,20 @@ class FILES {
 		return true;
 	}
 
-	public static function getExtension(string $url_path): string {
-		return (new \SplFileInfo($url_path))->getExtension();
+	public static function getExtension(string $path): string {
+		return (new \SplFileInfo($path))->getExtension();
 	}
 
-	public static function getName(string $url_path): string {
-		return (new \SplFileInfo($url_path))->getBasename("." . self::getExtension($url_path));
+	public static function getName(string $path): string {
+		return (new \SplFileInfo($path))->getBasename("." . self::getExtension($path));
 	}
 
-	public static function getBasename(string $url_path): string {
-		return (new \SplFileInfo($url_path))->getBasename();
+	public static function getBasename(string $path): string {
+		return (new \SplFileInfo($path))->getBasename();
 	}
 
-	public static function folder(string $path): bool {
+	public static function folder(?string $path = null): bool {
+		$path = $path === null ? self::$url_path : $path;
 		return !self::exist([$path]) ? mkdir($path, 0777, true) : true;
 	}
 
