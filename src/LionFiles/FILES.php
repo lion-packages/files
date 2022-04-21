@@ -19,29 +19,22 @@ class FILES {
 	}
 
 	public static function imageSize(string $path, array $data_path, string $imgSize): object {
-		foreach ($data_path as $key => $data) {
-			$data_file = getimagesize("{$path}{$data}");
+		$data_file = getimagesize("{$path}{$data}");
 
-			$union = "{$data_file[0]}x{$data_file[1]}";
-			if ($union != $imgSize) {
-				return self::response('error', "The file '{$data}' does not have the requested dimensions {$imgSize}.");
-				break;
-			}
+		$union = "{$data_file[0]}x{$data_file[1]}";
+		if ($union != $imgSize) {
+			return self::response('error', "The file '{$data}' does not have the requested dimensions '{$imgSize}'.");
 		}
 
 		return self::response('success');
 	}
 
-	public static function size(string $path, array $data_path, int $size): object {
+	public static function size(string $path, int $size): object {
 		$path = self::replace($path);
+		$file_size_kb = filesize($path) / 1024;
 
-		foreach ($data_path as $key => $data) {
-			$file_size_kb = filesize("{$path}{$data}") / 1024;
-
-			if ($file_size_kb > $size) {
-				return self::response('error', "The file '{$data}' is larger than the requested size.");
-				break;
-			}
+		if ($file_size_kb > $size) {
+			return self::response('error', "The file '{$data}' is larger than the requested size.");
 		}
 
 		return self::response('success');
@@ -59,23 +52,17 @@ class FILES {
 		return $data;
 	}
 
-	public static function remove(array $files): object {
-		foreach ($files as $key => $file) {
-			if (!unlink($file)) {
-				return self::response('error', "The file '{$file}' has not been removed.");
-				break;
-			}
+	public static function remove(string $path): object {
+		if (!unlink($path)) {
+			return self::response('error', "The file '{$path}' has not been removed.");
 		}
 
 		return self::response('success');
 	}
 
-	public static function exist(array $files): object {
-		foreach ($files as $key => $file) {
-			if (!file_exists($file)) {
-				return self::response('error', "The file/folder '{$file}' does not exist.");
-				break;
-			}
+	public static function exist(string $path): object {
+		if (!file_exists($path)) {
+			return self::response('error', "The file/folder '{$path}' does not exist.");
 		}
 
 		return self::response('success');
@@ -89,20 +76,13 @@ class FILES {
 		}
 	}
 
-	public static function upload(array $tmps, array $names, ?string $path = null): object {
+	public static function upload(string $tmp_name, string $name, ?string $path = null): object {
 		$path = $path === null ? self::$url_path : $path;
 		$path = self::replace($path);
+		self::folder($path);
 
-		$requestFolder = self::folder($path);
-		if ($requestFolder->status === 'error') {
-			return $requestFolder;
-		}
-
-		foreach ($names as $key => $name) {
-			if (!move_uploaded_file($tmps[$key], ($path === null ? self::$url_path : $path) . $name)) {
-				return self::response('error', "The file '{$name}' was not loaded.");
-				break;
-			}
+		if (!move_uploaded_file($tmp_name, "{$path}{$name}")) {
+			return self::response('error', "The file '{$name}' was not loaded.");
 		}
 
 		return self::response('success');
@@ -123,7 +103,7 @@ class FILES {
 	public static function folder(?string $path = null): object {
 		$path = self::replace($path === null ? self::$url_path : $path);
 
-		$requestExist = self::exist([$path]);
+		$requestExist = self::exist($path);
 		if ($requestExist->status === 'error') {
 			if (mkdir($path, 0777, true)) {
 				return self::response('success');
@@ -136,11 +116,11 @@ class FILES {
 	}
 
 	public static function validate(array $files, array $exts): object {
-		foreach ($files['name'] as $key_file => $file) {
+		foreach ($files as $key_file => $file) {
 			$file_extension = self::getExtension($file);
 
 			if (!in_array($file_extension, $exts)) {
-				return self::response('error', "The file {$file} does not have the required extension.");
+				return self::response('error', "The file '{$file}' does not have the required extension.");
 				break;
 			}
 		}
@@ -148,32 +128,33 @@ class FILES {
 		return self::response('success');
 	}
 
-	public static function replace(string $cell): string {
-		$cell = str_replace("á", "á", $cell);
-		$cell = str_replace("é", "é", $cell);
-		$cell = str_replace("í", "í", $cell);
-		$cell = str_replace("ó", "ó", $cell);
-		$cell = str_replace("ú", "ú", $cell);
-		$cell = str_replace("ñ", "ñ", $cell);
-		$cell = str_replace("Ã¡", "á", $cell);
-		$cell = str_replace("Ã©", "é", $cell);
-		$cell = str_replace("Ã", "í", $cell);
-		$cell = str_replace("Ã³", "ó", $cell);
-		$cell = str_replace("Ãº", "ú", $cell);
-		$cell = str_replace("Ã±", "ñ", $cell);
-		$cell = str_replace("Ã", "á", $cell);
-		$cell = str_replace("Ã‰", "é", $cell);
-		$cell = str_replace("Ã", "í", $cell);
-		$cell = str_replace("Ã“", "ó", $cell);
-		$cell = str_replace("Ãš", "ú", $cell);
-		$cell = str_replace("Ã‘", "ñ", $cell);
-		$cell = str_replace("&aacute;", "á", $cell);
-		$cell = str_replace("&eacute;", "é", $cell);
-		$cell = str_replace("&iacute;", "í", $cell);
-		$cell = str_replace("&oacute;", "ó", $cell);
-		$cell = str_replace("&uacute;", "ú", $cell);
-		$cell = str_replace("&ntilde;", "ñ", $cell);
-		return $cell;
+	public static function replace(string $value): string {
+		$value = str_replace("á", "á", $value);
+		$value = str_replace("é", "é", $value);
+		$value = str_replace("í", "í", $value);
+		$value = str_replace("ó", "ó", $value);
+		$value = str_replace("ú", "ú", $value);
+		$value = str_replace("ñ", "ñ", $value);
+		$value = str_replace("Ã¡", "á", $value);
+		$value = str_replace("Ã©", "é", $value);
+		$value = str_replace("Ã", "í", $value);
+		$value = str_replace("Ã³", "ó", $value);
+		$value = str_replace("Ãº", "ú", $value);
+		$value = str_replace("Ã±", "ñ", $value);
+		$value = str_replace("Ã", "á", $value);
+		$value = str_replace("Ã‰", "é", $value);
+		$value = str_replace("Ã", "í", $value);
+		$value = str_replace("Ã“", "ó", $value);
+		$value = str_replace("Ãš", "ú", $value);
+		$value = str_replace("Ã‘", "ñ", $value);
+		$value = str_replace("&aacute;", "á", $value);
+		$value = str_replace("&eacute;", "é", $value);
+		$value = str_replace("&iacute;", "í", $value);
+		$value = str_replace("&oacute;", "ó", $value);
+		$value = str_replace("&uacute;", "ú", $value);
+		$value = str_replace("&ntilde;", "ñ", $value);
+
+		return $value;
 	}
 
 }
