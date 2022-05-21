@@ -18,12 +18,12 @@ class FILES {
 		];
 	}
 
-	public static function imageSize(string $path, array $data_path, string $imgSize): object {
-		$data_file = getimagesize("{$path}{$data}");
+	public static function imageSize(string $path, string $data_path, string $imgSize): object {
+		$data_file = getimagesize("{$path}{$data_path}");
 
 		$union = "{$data_file[0]}x{$data_file[1]}";
 		if ($union != $imgSize) {
-			return self::response('error', "The file '{$data}' does not have the requested dimensions '{$imgSize}'.");
+			return self::response('error', "The file '{$data_path}' does not have the requested dimensions '{$imgSize}'.");
 		}
 
 		return self::response('success');

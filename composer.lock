@@ -4,15 +4,58 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f744ab3503d8f0e40f0a2216a709362c",
-    "packages": [],
+    "content-hash": "bef2994b20b975abcc8b918d0d1c342e",
+    "packages": [
+        {
+            "name": "lion-framework/lion-request",
+            "version": "v3.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Sleon4/Lion-Request.git",
+                "reference": "f380249d00b88f45d8d5c5f6090881e4afba995a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Sleon4/Lion-Request/zipball/f380249d00b88f45d8d5c5f6090881e4afba995a",
+                "reference": "f380249d00b88f45d8d5c5f6090881e4afba995a",
+                "shasum": ""
+            },
+            "require-dev": {
+                "vlucas/phpdotenv": "^5.4"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "LionRequest\\": "src/LionRequest/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Sergio León",
+                    "email": "sergioleon4004@hotmail.com"
+                }
+            ],
+            "description": "Library created to request input data and response requests",
+            "support": {
+                "issues": "https://github.com/Sleon4/Lion-Request/issues",
+                "source": "https://github.com/Sleon4/Lion-Request/tree/v3.1"
+            },
+            "time": "2022-05-19T14:39:42+00:00"
+        }
+    ],
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
-    "platform": [],
+    "platform": {
+        "php": ">=8.0.9"
+    },
     "platform-dev": [],
-    "plugin-api-version": "2.2.0"
+    "plugin-api-version": "2.3.0"
 }
