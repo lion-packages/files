@@ -2,6 +2,8 @@
 
 namespace LionFiles;
 
+use LionRequest\Response;
+
 class FILES {
 
 	public static string $url_path = "storage/upload_files/";
@@ -10,23 +12,15 @@ class FILES {
 
 	}
 
-	private static function response(string $status, ?string $message = null, array $data = []): object {
-		return (object) [
-			'status' => $status,
-			'message' => $message,
-			'data' => $data
-		];
-	}
-
 	public static function imageSize(string $path, string $data_path, string $imgSize): object {
 		$data_file = getimagesize("{$path}{$data_path}");
 
 		$union = "{$data_file[0]}x{$data_file[1]}";
 		if ($union != $imgSize) {
-			return self::response('error', "The file '{$data_path}' does not have the requested dimensions '{$imgSize}'.");
+			return Response::error("The file '{$data_path}' does not have the requested dimensions '{$imgSize}'");
 		}
 
-		return self::response('success');
+		return Response::success("File '{$data_path}' meets requested dimensions '{$imgSize}'");
 	}
 
 	public static function size(string $path, int $size): object {
@@ -34,13 +28,13 @@ class FILES {
 		$file_size_kb = filesize($path) / 1024;
 
 		if ($file_size_kb > $size) {
-			return self::response('error', "The file '{$data}' is larger than the requested size.");
+			return Response::error("The file '{$data}' is larger than the requested size");
 		}
 
-		return self::response('success');
+		return Response::success("The file '{$data}' meets the requested size");
 	}
 
-	public static function view(string $path): array {
+	public static function view(string $path): array|object {
 		$path = self::replace($path);
 		$list = scandir($path, 1);
 		$data = [];
@@ -54,18 +48,18 @@ class FILES {
 
 	public static function remove(string $path): object {
 		if (!unlink($path)) {
-			return self::response('error', "The file '{$path}' has not been removed.");
+			return Response::error("The file '{$path}' has not been removed");
 		}
 
-		return self::response('success');
+		return Response::success("The file '{$path}' has been deleted");
 	}
 
 	public static function exist(string $path): object {
 		if (!file_exists($path)) {
-			return self::response('error', "The file/folder '{$path}' does not exist.");
+			return Response::error("The file/folder '{$path}' does not exist");
 		}
 
-		return self::response('success');
+		return Response::success("The file/folder '{$path}' exists");
 	}
 
 	public static function rename(string $file, ?string $indicative = null): string {
@@ -82,10 +76,10 @@ class FILES {
 		self::folder($path);
 
 		if (!move_uploaded_file($tmp_name, "{$path}{$name}")) {
-			return self::response('error', "The file '{$name}' was not loaded.");
+			return Response::error("The file '{$name}' was not loaded");
 		}
 
-		return self::response('success');
+		return Response::success("The file '{$name}' was uploaded");
 	}
 
 	public static function getExtension(string $path): string {
@@ -106,13 +100,13 @@ class FILES {
 		$requestExist = self::exist($path);
 		if ($requestExist->status === 'error') {
 			if (mkdir($path, 0777, true)) {
-				return self::response('success');
+				return Response::success("Directory '{$path}' created");
 			} else {
-				return self::response('error', "Directory '{$path}' not created");
+				return Response::error("Directory '{$path}' not created");
 			}
-		} else {
-			return self::response('success');
 		}
+
+		return Response::success($requestExist->message);
 	}
 
 	public static function validate(array $files, array $exts): object {
@@ -120,12 +114,12 @@ class FILES {
 			$file_extension = self::getExtension($file);
 
 			if (!in_array($file_extension, $exts)) {
-				return self::response('error', "The file '{$file}' does not have the required extension.");
+				return Response::error("The file '{$file}' does not have the required extension");
 				break;
 			}
 		}
 
-		return self::response('success');
+		return Response::success("files have required extension");
 	}
 
 	public static function replace(string $value): string {
