@@ -74,7 +74,7 @@ var_dump(
 ```
 
 ### 6. UPLOAD
-The `upload` function uploads files to a specified path.
+The `rename` function renames files.
 ```php
 require_once 'vendor/autoload.php';
 
@@ -87,6 +87,29 @@ var_dump(
 		'storage/img/'
 	)
 );
+```
+
+### 7. RENAME
+The `rename` function renames files with random characters, it allows to add a callsign to each file when it is renamed, the `rename` function uses `md5(hash('sha256', uniqid()))` to randomly rename files.
+```php
+require_once 'vendor/autoload.php';
+
+use LionFiles\FILES;
+
+var_dump(
+	FILES::rename($_FILES['user_files']['name'])
+);
+// example output => string(40) "141539cf52f48ecdc5008a19d62ede3b.jpg"
+
+// or
+
+var_dump(
+	FILES::rename(
+		$_FILES['user_files']['name'],
+		'IMG'
+	)
+);
+// example output => string(40) "IMG-141539cf52f48ecdc5008a19d62ede3b.jpg"
 ```
 
 ## License
