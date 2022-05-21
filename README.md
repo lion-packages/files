@@ -45,5 +45,49 @@ var_dump(
 );
 ```
 
+### 4. FOLDER
+The `folder` function checks if the directory path exists, if it doesn't, it creates the directory.
+```php
+require_once 'vendor/autoload.php';
+
+use LionFiles\FILES;
+
+var_dump(
+	FILES::folder('path...')
+);
+```
+
+### 5. VALIDATE
+The `validate` function checks if a file complies with the established validations (extensions). <br>
+In this example it is established in the validation that it only allows the entry of `png, jpg` files.
+```php
+require_once 'vendor/autoload.php';
+
+use LionFiles\FILES;
+
+var_dump(
+	FILES::validate([
+		'storage/code_letters_screen_137590_3840x2400.jpg',
+		'storage/code_programming_text_140050_3840x2400.jpg'
+	], ['png', 'jpg'])
+);
+```
+
+### 6. UPLOAD
+The `upload` function uploads files to a specified path.
+```php
+require_once 'vendor/autoload.php';
+
+use LionFiles\FILES;
+
+var_dump(
+	FILES::upload(
+		$_FILES['user_files']['tmp_name'],
+		$_FILES['user_files']['name'],
+		'storage/img/'
+	)
+);
+```
+
 ## License
 Copyright © 2022 [MIT License](https://github.com/Sleon4/Lion-Files/blob/main/LICENSE)
