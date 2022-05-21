@@ -4,7 +4,7 @@ namespace LionFiles;
 
 class FILES {
 
-	private static string $url_path = "storage/upload_files/";
+	public static string $url_path = "storage/upload_files/";
 
 	public function __construct() {
 
