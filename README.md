@@ -112,5 +112,65 @@ var_dump(
 // example output => string(40) "IMG-141539cf52f48ecdc5008a19d62ede3b.jpg"
 ```
 
+### 8. EXIST
+The `exist` function allows you to check if a folder or file exists.
+```php
+require_once 'vendor/autoload.php';
+
+use LionFiles\FILES;
+
+var_dump(
+	FILES::exist('path...')
+);
+```
+
+### 9. REMOVE
+The `remove` function allows you to delete files.
+```php
+require_once 'vendor/autoload.php';
+
+use LionFiles\FILES;
+
+var_dump(
+	FILES::remove('path...')
+);
+```
+
+### 10. VIEW
+The `view` function gets a list of the files found within a path.
+```php
+require_once 'vendor/autoload.php';
+
+use LionFiles\FILES;
+
+var_dump(
+	FILES::view('path...')
+);
+```
+
+### 11. SIZE
+The `size` function checks if a file meets the required size in KB.
+```php
+require_once 'vendor/autoload.php';
+
+use LionFiles\FILES;
+
+var_dump(
+	FILES::size('path...', 500)
+);
+```
+
+### 12. IMAGESIZE
+The `imageSize` function allows you to check if an image meets the requested dimensions.
+```php
+require_once 'vendor/autoload.php';
+
+use LionFiles\FILES;
+
+var_dump(
+	FILES::imageSize('folder', 'file', '1920x1080')
+);
+```
+
 ## License
 Copyright © 2022 [MIT License](https://github.com/Sleon4/Lion-Files/blob/main/LICENSE)
