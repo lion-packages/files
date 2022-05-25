@@ -160,7 +160,7 @@ var_dump(
 );
 ```
 
-### 12. IMAGESIZE
+### 12. IMAGE SIZE
 The `imageSize` function allows you to check if an image meets the requested dimensions.
 ```php
 require_once 'vendor/autoload.php';
