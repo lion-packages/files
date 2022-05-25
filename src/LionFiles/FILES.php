@@ -28,10 +28,10 @@ class FILES {
 		$file_size_kb = filesize($path) / 1024;
 
 		if ($file_size_kb > $size) {
-			return Response::error("The file '{$data}' is larger than the requested size");
+			return Response::error("The file '{$path}' is larger than the requested size");
 		}
 
-		return Response::success("The file '{$data}' meets the requested size");
+		return Response::success("The file '{$path}' meets the requested size");
 	}
 
 	public static function view(string $path): array|object {
