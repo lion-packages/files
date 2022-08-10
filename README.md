@@ -10,7 +10,7 @@ composer require lion-framework/lion-files
 
 ## Usage
 ### 1. GET EXTENSION
-The `getExtension` function is available to get the extension of a specific file.
+The `getExtension` function is available to get the extension of a specific file
 ```php
 require_once 'vendor/autoload.php';
 
@@ -22,7 +22,7 @@ var_dump(
 ```
 
 ### 2. GET NAME
-The `getName` function is available to get the name of a specific file.
+The `getName` function is available to get the name of a specific file
 ```php
 require_once 'vendor/autoload.php';
 
@@ -34,7 +34,7 @@ var_dump(
 ```
 
 ### 3. GET BASE NAME
-The `getBasename` function is available to get the name and extension of a specific file.
+The `getBasename` function is available to get the name and extension of a specific file
 ```php
 require_once 'vendor/autoload.php';
 
@@ -46,7 +46,7 @@ var_dump(
 ```
 
 ### 4. FOLDER
-The `folder` function checks if the directory path exists, if it doesn't, it creates the directory.
+The `folder` function checks if the directory path exists, if it doesn't, it creates the directory
 ```php
 require_once 'vendor/autoload.php';
 
@@ -59,7 +59,7 @@ var_dump(
 
 ### 5. VALIDATE
 The `validate` function checks if a file complies with the established validations (extensions). <br>
-In this example it is established in the validation that it only allows the entry of `png, jpg` files.
+In this example it is established in the validation that it only allows the entry of `png, jpg` files
 ```php
 require_once 'vendor/autoload.php';
 
@@ -74,7 +74,7 @@ var_dump(
 ```
 
 ### 6. UPLOAD
-The `rename` function renames files.
+The `upload` function allows you to upload files to a path
 ```php
 require_once 'vendor/autoload.php';
 
@@ -90,7 +90,7 @@ var_dump(
 ```
 
 ### 7. RENAME
-The `rename` function renames files with random characters, it allows to add a callsign to each file when it is renamed, the `rename` function uses `md5(hash('sha256', uniqid()))` to randomly rename files.
+The `rename` function renames files with random characters, it allows to add a callsign to each file when it is renamed, the `rename` function uses `md5(hash('sha256', uniqid()))` to randomly rename files
 ```php
 require_once 'vendor/autoload.php';
 
@@ -113,7 +113,7 @@ var_dump(
 ```
 
 ### 8. EXIST
-The `exist` function allows you to check if a folder or file exists.
+The `exist` function allows you to check if a folder or file exists
 ```php
 require_once 'vendor/autoload.php';
 
@@ -125,7 +125,7 @@ var_dump(
 ```
 
 ### 9. REMOVE
-The `remove` function allows you to delete files.
+The `remove` function allows you to delete files
 ```php
 require_once 'vendor/autoload.php';
 
@@ -137,7 +137,7 @@ var_dump(
 ```
 
 ### 10. VIEW
-The `view` function gets a list of the files found within a path.
+The `view` function gets a list of the files found within a path
 ```php
 require_once 'vendor/autoload.php';
 
@@ -149,7 +149,7 @@ var_dump(
 ```
 
 ### 11. SIZE
-The `size` function checks if a file meets the required size in KB.
+The `size` function checks if a file meets the required size in KB
 ```php
 require_once 'vendor/autoload.php';
 
@@ -161,7 +161,7 @@ var_dump(
 ```
 
 ### 12. IMAGE SIZE
-The `imageSize` function allows you to check if an image meets the requested dimensions.
+The `imageSize` function allows you to check if an image meets the requested dimensions
 ```php
 require_once 'vendor/autoload.php';
 
