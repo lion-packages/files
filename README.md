@@ -14,10 +14,10 @@ The `getExtension` function is available to get the extension of a specific file
 ```php
 require_once 'vendor/autoload.php';
 
-use LionFiles\FILES;
+use LionFiles\Files;
 
 var_dump(
-	FILES::getExtension('path/myfile...');
+	Files::getExtension('path/myfile...');
 );
 ```
 
@@ -26,10 +26,10 @@ The `getName` function is available to get the name of a specific file
 ```php
 require_once 'vendor/autoload.php';
 
-use LionFiles\FILES;
+use LionFiles\Files;
 
 var_dump(
-	FILES::getName('path/myfile...');
+	Files::getName('path/myfile...');
 );
 ```
 
@@ -38,10 +38,10 @@ The `getBasename` function is available to get the name and extension of a speci
 ```php
 require_once 'vendor/autoload.php';
 
-use LionFiles\FILES;
+use LionFiles\Files;
 
 var_dump(
-	FILES::getBasename('path/myfile...');
+	Files::getBasename('path/myfile...');
 );
 ```
 
@@ -50,10 +50,10 @@ The `folder` function checks if the directory path exists, if it doesn't, it cre
 ```php
 require_once 'vendor/autoload.php';
 
-use LionFiles\FILES;
+use LionFiles\Files;
 
 var_dump(
-	FILES::folder('path...')
+	Files::folder('path...')
 );
 ```
 
@@ -63,10 +63,10 @@ In this example it is established in the validation that it only allows the entr
 ```php
 require_once 'vendor/autoload.php';
 
-use LionFiles\FILES;
+use LionFiles\Files;
 
 var_dump(
-	FILES::validate([
+	Files::validate([
 		'storage/code_letters_screen_137590_3840x2400.jpg',
 		'storage/code_programming_text_140050_3840x2400.jpg'
 	], ['png', 'jpg'])
@@ -78,10 +78,10 @@ The `upload` function allows you to upload files to a path
 ```php
 require_once 'vendor/autoload.php';
 
-use LionFiles\FILES;
+use LionFiles\Files;
 
 var_dump(
-	FILES::upload(
+	Files::upload(
 		$_FILES['user_files']['tmp_name'],
 		$_FILES['user_files']['name'],
 		'storage/img/'
@@ -94,17 +94,17 @@ The `rename` function renames files with random characters, it allows to add a c
 ```php
 require_once 'vendor/autoload.php';
 
-use LionFiles\FILES;
+use LionFiles\Files;
 
 var_dump(
-	FILES::rename($_FILES['user_files']['name'])
+	Files::rename($_FILES['user_files']['name'])
 );
 // example output => string(40) "141539cf52f48ecdc5008a19d62ede3b.jpg"
 
 // or
 
 var_dump(
-	FILES::rename(
+	Files::rename(
 		$_FILES['user_files']['name'],
 		'IMG'
 	)
@@ -117,10 +117,10 @@ The `exist` function allows you to check if a folder or file exists
 ```php
 require_once 'vendor/autoload.php';
 
-use LionFiles\FILES;
+use LionFiles\Files;
 
 var_dump(
-	FILES::exist('path...')
+	Files::exist('path...')
 );
 ```
 
@@ -129,10 +129,10 @@ The `remove` function allows you to delete files
 ```php
 require_once 'vendor/autoload.php';
 
-use LionFiles\FILES;
+use LionFiles\Files;
 
 var_dump(
-	FILES::remove('path...')
+	Files::remove('path...')
 );
 ```
 
@@ -141,10 +141,10 @@ The `view` function gets a list of the files found within a path
 ```php
 require_once 'vendor/autoload.php';
 
-use LionFiles\FILES;
+use LionFiles\Files;
 
 var_dump(
-	FILES::view('path...')
+	Files::view('path...')
 );
 ```
 
@@ -153,10 +153,10 @@ The `size` function checks if a file meets the required size in KB
 ```php
 require_once 'vendor/autoload.php';
 
-use LionFiles\FILES;
+use LionFiles\Files;
 
 var_dump(
-	FILES::size('path...', 500)
+	Files::size('path...', 500)
 );
 ```
 
@@ -165,10 +165,10 @@ The `imageSize` function allows you to check if an image meets the requested dim
 ```php
 require_once 'vendor/autoload.php';
 
-use LionFiles\FILES;
+use LionFiles\Files;
 
 var_dump(
-	FILES::imageSize('folder', 'file', '1920x1080')
+	Files::imageSize('folder', 'file', '1920x1080')
 );
 ```
 
