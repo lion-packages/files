@@ -15,9 +15,7 @@
         }
     ],
     "require": {
-        "php": ">=8.0"
-    },
-    "require-dev": {
-        "lion-framework/lion-request": "^5.0"
+        "php": ">=8.1",
+        "lion-framework/lion-request": "^5.1"
     }
 }

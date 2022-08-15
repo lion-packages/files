@@ -4,28 +4,24 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "bdffe39eae9f5e6397ab0eb6838de40d",
-    "packages": [],
-    "packages-dev": [
+    "content-hash": "339cdd37de9c36845e6f3516027e23c0",
+    "packages": [
         {
             "name": "lion-framework/lion-request",
-            "version": "v5.0",
+            "version": "v5.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sleon4/Lion-Request.git",
-                "reference": "bb93e28ad8d355a1f4d1bedcd6cc2419b0650cbb"
+                "reference": "dd243063b6d837cca4433a11badb8244c9afb0ef"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Sleon4/Lion-Request/zipball/bb93e28ad8d355a1f4d1bedcd6cc2419b0650cbb",
-                "reference": "bb93e28ad8d355a1f4d1bedcd6cc2419b0650cbb",
+                "url": "https://api.github.com/repos/Sleon4/Lion-Request/zipball/dd243063b6d837cca4433a11badb8244c9afb0ef",
+                "reference": "dd243063b6d837cca4433a11badb8244c9afb0ef",
                 "shasum": ""
             },
             "require": {
-                "php": ">=8.0"
-            },
-            "require-dev": {
-                "vlucas/phpdotenv": "^5.4"
+                "php": ">=8.1"
             },
             "type": "library",
             "autoload": {
@@ -46,18 +42,19 @@
             "description": "Library created to request input data and response requests",
             "support": {
                 "issues": "https://github.com/Sleon4/Lion-Request/issues",
-                "source": "https://github.com/Sleon4/Lion-Request/tree/v5.0"
+                "source": "https://github.com/Sleon4/Lion-Request/tree/v5.1"
             },
-            "time": "2022-07-14T14:31:21+00:00"
+            "time": "2022-08-15T16:14:17+00:00"
         }
     ],
+    "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": ">=8.0"
+        "php": ">=8.1"
     },
     "platform-dev": [],
     "plugin-api-version": "2.3.0"
