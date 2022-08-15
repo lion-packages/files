@@ -4,7 +4,7 @@ namespace LionFiles;
 
 use LionRequest\Response;
 
-class FILES {
+class Files {
 
 	public static string $url_path = "storage/upload_files/";
 
