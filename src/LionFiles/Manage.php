@@ -35,6 +35,12 @@ class Manage {
 	}
 
 	public static function view(string $path): array|object {
+		$responseExist = self::exist($path);
+
+		if ($responseExist->status === 'error') {
+			return $responseExist;
+		}
+
 		$path = self::replace($path);
 		$list = scandir($path, 1);
 		$data = [];
