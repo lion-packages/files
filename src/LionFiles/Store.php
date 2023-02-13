@@ -4,13 +4,9 @@ namespace LionFiles;
 
 use LionRequest\Response;
 
-class Manage {
+class Store {
 
 	public static string $url_path = "storage/upload_files/";
-
-	public function __construct() {
-
-	}
 
 	public static function imageSize(string $path, string $data_path, string $imgSize): object {
 		$data_file = getimagesize("{$path}{$data_path}");
