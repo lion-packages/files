@@ -8,6 +8,10 @@ class Store {
 
 	public static string $url_path = "storage/upload_files/";
 
+	public static function get(string $path): string|false {
+		return file_get_contents($path);
+	}
+
 	public static function imageSize(string $path, string $data_path, string $imgSize): object {
 		$data_file = getimagesize("{$path}{$data_path}");
 
