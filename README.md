@@ -1,13 +1,26 @@
-# Lion-Files
+<p align="center">
+  <a href="https://lion-client.vercel.app/" target="_blank">
+    <img
+         src="https://user-images.githubusercontent.com/56183278/230516080-096130be-e474-4f3a-a78a-44d3973ff715.png"
+         width="300"
+         alt="Lion-Framework Logo"
+    >
+  </a>
+</p>
 
-[![Latest Stable Version](http://poser.pugx.org/lion/files/v)](https://packagist.org/packages/lion/files) [![Total Downloads](http://poser.pugx.org/lion/files/downloads)](https://packagist.org/packages/lion/files) [![License](http://poser.pugx.org/lion/files/license)](https://packagist.org/packages/lion/files) [![PHP Version Require](http://poser.pugx.org/lion/files/require/php)](https://packagist.org/packages/lion/files)
+<p align="center">
+  <img src="http://poser.pugx.org/lion/files/v" alt="Latest Stable Version">
+  <img src="http://poser.pugx.org/lion/files/downloads" alt="Total Downloads">
+  <img src="http://poser.pugx.org/lion/files/license" alt="License">
+  <img src="http://poser.pugx.org/lion/files/require/php" alt="PHP Version Require">
+</p>
 
 ## Install
 
-```
-composer require lion/files
+```shell
+composer create-project lion/files
 ```
 
 ## License
 
-Copyright © 2022 [MIT License](https://github.com/Sleon4/Lion-Files/blob/main/LICENSE)
+The Lion-Files is open-sourced software licensed under the [MIT License](https://github.com/Sleon4/Lion-Files/blob/main/LICENSE).
