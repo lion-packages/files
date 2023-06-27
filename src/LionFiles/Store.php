@@ -2,8 +2,6 @@
 
 namespace LionFiles;
 
-use LionRequest\Response;
-
 class Store {
 
 	public static string $url_path = "storage/upload_files/";
@@ -14,13 +12,19 @@ class Store {
 
 	public static function imageSize(string $path, string $data_path, string $imgSize): object {
 		$data_file = getimagesize("{$path}{$data_path}");
-
 		$union = "{$data_file[0]}x{$data_file[1]}";
+
 		if ($union != $imgSize) {
-			return Response::error("The file '{$data_path}' does not have the requested dimensions '{$imgSize}'");
+			return (object) [
+				'status' => "error",
+				'message' => "the file '{$data_path}' does not have the requested dimensions '{$imgSize}'"
+			];
 		}
 
-		return Response::success("File '{$data_path}' meets requested dimensions '{$imgSize}'");
+		return (object) [
+			'status' => "success",
+			'message' => "file '{$data_path}' meets requested dimensions '{$imgSize}'"
+		];
 	}
 
 	public static function size(string $path, int $size): object {
@@ -28,10 +32,16 @@ class Store {
 		$file_size_kb = filesize($path) / 1024;
 
 		if ($file_size_kb > $size) {
-			return Response::error("The file '{$path}' is larger than the requested size");
+			return (object) [
+				'status' => "error",
+				'message' => "the file '{$path}' is larger than the requested size"
+			];
 		}
 
-		return Response::success("The file '{$path}' meets the requested size");
+		return (object) [
+			'status' => "success",
+			'message' => "the file '{$path}' meets the requested size"
+		];
 	}
 
 	public static function view(string $path): array|object {
@@ -54,18 +64,30 @@ class Store {
 
 	public static function remove(string $path): object {
 		if (!unlink($path)) {
-			return Response::error("The file '{$path}' has not been removed");
+			return (object) [
+				'status' => "error",
+				'message' => "the file '{$path}' has not been removed"
+			];
 		}
 
-		return Response::success("The file '{$path}' has been deleted");
+		return (object) [
+			'status' => "success",
+			'message' => "the file '{$path}' has been deleted"
+		];
 	}
 
 	public static function exist(string $path): object {
 		if (!file_exists($path)) {
-			return Response::error("The file/folder '{$path}' does not exist");
+			return (object) [
+				'status' => "error",
+				'message' => "the file/folder '{$path}' does not exist"
+			];
 		}
 
-		return Response::success("The file/folder '{$path}' exists");
+		return (object) [
+			'status' => "success",
+			'message' => "the file/folder '{$path}' exists"
+		];
 	}
 
 	public static function rename(string $file, ?string $indicative = null): string {
@@ -82,10 +104,16 @@ class Store {
 		self::folder($path);
 
 		if (!move_uploaded_file($tmp_name, "{$path}{$name}")) {
-			return Response::error("The file '{$name}' was not loaded");
+			return (object) [
+				'status' => "error",
+				'message' => "the file '{$name}' was not loaded"
+			];
 		}
 
-		return Response::success("The file '{$name}' was uploaded");
+		return (object) [
+			'status' => "success",
+			'message' => "the file '{$name}' was uploaded"
+		];
 	}
 
 	public static function getExtension(string $path): string {
@@ -106,13 +134,22 @@ class Store {
 		$requestExist = self::exist($path);
 		if ($requestExist->status === 'error') {
 			if (mkdir($path, 0777, true)) {
-				return Response::success("Directory '{$path}' created");
+				return (object) [
+					'status' => "success",
+					'message' => "directory '{$path}' created"
+				];
 			} else {
-				return Response::error("Directory '{$path}' not created");
+				return (object) [
+					'status' => "error",
+					'message' => "directory '{$path}' not created"
+				];
 			}
 		}
 
-		return Response::success($requestExist->message);
+		return (object) [
+			'status' => "success",
+			'message' => $requestExist->message
+		];
 	}
 
 	public static function validate(array $files, array $exts): object {
@@ -120,12 +157,18 @@ class Store {
 			$file_extension = self::getExtension($file);
 
 			if (!in_array($file_extension, $exts)) {
-				return Response::error("The file '{$file}' does not have the required extension");
+				return (object) [
+					'status' => "error",
+					'message' => "the file '{$file}' does not have the required extension"
+				];
 				break;
 			}
 		}
 
-		return Response::success("files have required extension");
+		return (object) [
+			'status' => "success",
+			'message' => "files have required extension"
+		];
 	}
 
 	public static function replace(string $value): string {
@@ -153,7 +196,6 @@ class Store {
 		$value = str_replace("&oacute;", "ó", $value);
 		$value = str_replace("&uacute;", "ú", $value);
 		$value = str_replace("&ntilde;", "ñ", $value);
-
 		return $value;
 	}
 
