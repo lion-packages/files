@@ -18,7 +18,7 @@
 ## Install
 
 ```shell
-composer create-project lion/files
+composer require lion/files
 ```
 
 ## License
