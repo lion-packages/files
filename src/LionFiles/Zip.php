@@ -10,6 +10,13 @@ class Zip {
 	private static ZipArchive $zipArchive;
 	private static array $delete_files = [];
 
+	public static function decompress(string $from, string $to) {
+		$zip = new ZipArchive();
+        $zip->open($from, false);
+        $zip->extractTo($to);
+        $zip->close();
+	}
+
 	public static function create(string $zip_name): void {
 		self::$zipArchive = new ZipArchive();
 		self::$zipArchive->open($zip_name, ZipArchive::CREATE);
