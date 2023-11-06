@@ -1,45 +1,65 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LionFiles;
 
-use \ZipArchive;
+use Exception;
 use LionFiles\Store;
+use ZipArchive;
 
-class Zip {
+class Zip
+{
+    private Store $store;
+	private ZipArchive $zipArchive;
+	private array $deleteFiles = [];
 
-	private static ZipArchive $zipArchive;
-	private static array $delete_files = [];
+    public function __construct()
+    {
+        $this->store = new Store();
+        $this->zipArchive = new ZipArchive();
+    }
 
-	public static function decompress(string $from, string $to) {
-		$zip = new ZipArchive();
-        $zip->open($from, false);
-        $zip->extractTo($to);
-        $zip->close();
+	public function decompress(string $from, string $to): void
+    {
+        if (!$this->zipArchive->open($from)) {
+            throw new Exception("The defined route is not valid: {$from}");
+        }
+
+        if (!$this->zipArchive->extractTo($to)) {
+            throw new Exception("The defined route is not valid: {$to}");
+        }
+
+        $this->zipArchive->close();
 	}
 
-	public static function create(string $zip_name): void {
-		self::$zipArchive = new ZipArchive();
-		self::$zipArchive->open($zip_name, ZipArchive::CREATE);
+	public function create(string $zipName): void
+    {
+		if (!$this->zipArchive->open($zipName, ZipArchive::CREATE)) {
+            throw new Exception("The defined route is not valid: {$zipName}");
+        }
 	}
 
-	public static function save(): void {
-		self::$zipArchive->close();
+	public function save(): void
+    {
+		$this->zipArchive->close();
 
-		foreach (self::$delete_files as $key => $file) {
-			Store::remove($file);
+		foreach ($this->deleteFiles as $key => $file) {
+			$this->store->remove($file);
 		}
 	}
 
-	public static function add(array $files): void {
+	public function add(array $files): void
+    {
 		foreach ($files as $key => $file) {
-			self::$zipArchive->addFile($file, Store::getBasename($file));
+			$this->zipArchive->addFile($file, $this->store->getBasename($file));
 		}
 	}
 
-	public static function addUpload(string $path, string $file, string $file_name) {
-		Store::upload($file, $file_name, $path);
-		self::$zipArchive->addFile($path . $file_name, Store::getBasename($file_name));
-		array_push(self::$delete_files, $path . $file_name);
+	public function addUpload(string $path, string $file, string $fileName): void
+    {
+		$this->store->upload($file, $fileName, $path);
+		$this->zipArchive->addFile($path . $fileName, $this->store->getBasename($fileName));
+		array_push($this->deleteFiles, $path . $fileName);
 	}
-
 }
