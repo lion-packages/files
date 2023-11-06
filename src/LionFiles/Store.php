@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace LionFiles;
 
+use Exception;
 use SplFileInfo;
 
 class Store
@@ -33,16 +34,16 @@ class Store
         ];
     }
 
-    public function size(string $path, int $size): object
+    public function size(string $file, int|float $fileSize): object
     {
-        $path = $this->replace($path);
-        $file_size_kb = filesize($path) / 1024;
+        $file = $this->replace($file);
+        $fileSizeKb = filesize($file) / 1024;
 
-        if ($file_size_kb > $size) {
-            return (object) ['status' => 'error', 'message' => "The file '{$path}' is larger than the requested size"];
+        if ($fileSizeKb > $fileSize) {
+            return (object) ['status' => 'error', 'message' => "The file '{$file}' is larger than the requested size"];
         }
 
-        return (object) ['status' => 'success', 'message' => "The file '{$path}' meets the requested size"];
+        return (object) ['status' => 'success', 'message' => "The file '{$file}' meets the requested size"];
     }
 
     public function view(string $path): array|object
@@ -66,11 +67,22 @@ class Store
 
     public function remove(string $path): object
     {
-        if (!unlink($path)) {
-            return (object) ['status' => 'error', 'message' => "The file '{$path}' has not been removed"];
+        $exist = $this->exist($path);
+
+        if ($exist->status === 'error') {
+            return (object) [
+                'status' => 'error',
+                'message' => "The file '{$path}' could not be removed because it does not exist"
+            ];
         }
 
-        return (object) ['status' => 'success', 'message' => "The file '{$path}' has been deleted"];
+        try {
+            unlink($path);
+
+            return (object) ['status' => 'success', 'message' => "The file '{$path}' has been deleted"];
+        } catch (Exception $e) {
+            return (object) ['status' => 'error', 'message' => $e->getMessage()];
+        }
     }
 
     public function exist(string $path): object
@@ -91,13 +103,13 @@ class Store
         }
     }
 
-    public function upload(string $tmp_name, string $name, ?string $path = null): object
+    public function upload(string $tmpName, string $name, ?string $path = null): object
     {
         $path = $path === null ? $this->url_path : $path;
         $path = $this->replace($path);
         $this->folder($path);
 
-        if (!move_uploaded_file($tmp_name, "{$path}{$name}")) {
+        if (!move_uploaded_file($tmpName, "{$path}{$name}")) {
             return (object) ['status' => 'error', 'message' => "The file '{$name}' was not loaded"];
         }
 
