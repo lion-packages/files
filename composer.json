@@ -1,6 +1,6 @@
 {
     "name": "lion/files",
-    "description": "Library created with the function of working internal system files.",
+    "description": "library created with the function of working internal system files",
     "type": "library",
     "license": "MIT",
     "autoload": {
