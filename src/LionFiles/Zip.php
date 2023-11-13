@@ -19,6 +19,9 @@ class Zip
         $this->zipArchive = new ZipArchive();
     }
 
+    /**
+     * Unzip a ZIP file from a defined path to a defined path
+     * */
 	public function decompress(string $from, string $to): void
     {
         $this->zipArchive->open($from);
@@ -26,6 +29,9 @@ class Zip
         $this->zipArchive->close();
 	}
 
+    /**
+     * Create a ZIP file at a defined path
+     * */
 	public function create(string $zipName): Zip
     {
 		$this->zipArchive->open($zipName, ZipArchive::CREATE);
@@ -33,6 +39,9 @@ class Zip
         return $this;
 	}
 
+    /**
+     * Add files from a defined path to the ZIP archive
+     * */
 	public function add(array $files): Zip
     {
 		foreach ($files as $key => $file) {
@@ -42,6 +51,9 @@ class Zip
         return $this;
 	}
 
+    /**
+     * Add files sent through a request to the ZIP archive
+     * */
 	public function addUpload(string $path, string $file, string $fileName): Zip
     {
 		$this->store->upload($file, $fileName, $path);
@@ -51,6 +63,9 @@ class Zip
         return $this;
 	}
 
+    /**
+     * Save the ZIP file with the current data
+     * */
     public function save(): void
     {
         $this->zipArchive->close();

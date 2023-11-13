@@ -11,11 +11,17 @@ class Store
 {
     protected string $url_path = 'storage/upload-files/';
 
+    /**
+     * Gets the file from the defined path
+     * */
     public function get(string $path): string|false
     {
         return file_get_contents($path);
     }
 
+    /**
+     * Validates if the resolution of a file is valid
+     * */
     public function imageSize(string $path, string $data_path, string $imgSize): object
     {
         $data_file = getimagesize("{$path}{$data_path}");
@@ -34,6 +40,9 @@ class Store
         ];
     }
 
+    /**
+     * Validates if the weight of a file is valid in KB
+     * */
     public function size(string $file, int|float $fileSize): object
     {
         $file = $this->replace($file);
@@ -46,6 +55,10 @@ class Store
         return (object) ['status' => 'success', 'message' => "The file '{$file}' meets the requested size"];
     }
 
+    /**
+     * Returns an array with all the files and folders that are within a
+     * defined path
+     * */
     public function view(string $path): array|object
     {
         $responseExist = $this->exist($path);
@@ -65,6 +78,9 @@ class Store
         return $data;
     }
 
+    /**
+     * Remove files from a defined path
+     * */
     public function remove(string $path): object
     {
         $exist = $this->exist($path);
@@ -85,6 +101,9 @@ class Store
         }
     }
 
+    /**
+     * Checks if a file/folder exists in a defined path
+     * */
     public function exist(string $path): object
     {
         if (!file_exists($path)) {
@@ -94,6 +113,9 @@ class Store
         return (object) ['status' => 'success', 'message' => "The file/folder '{$path}' exists"];
     }
 
+    /**
+     * Renames a file and allows adding a callsign to it
+     * */
     public function rename(string $file, ?string $indicative = null): string
     {
         if ($indicative != null) {
@@ -103,6 +125,9 @@ class Store
         }
     }
 
+    /**
+     * Allows uploading files to a defined path
+     * */
     public function upload(string $tmpName, string $name, ?string $path = null): object
     {
         $path = $path === null ? $this->url_path : $path;
@@ -116,21 +141,33 @@ class Store
         return (object) ['status' => 'success', 'message' => "The file '{$name}' was uploaded"];
     }
 
+    /**
+     * Gets the name extension of a file
+     * */
     public function getExtension(string $path): string
     {
         return (new SplFileInfo($path))->getExtension();
     }
 
+    /**
+     * Gets the name and extension of a file
+     * */
     public function getName(string $path): string
     {
         return (new SplFileInfo($path))->getBasename("." . $this->getExtension($path));
     }
 
+    /**
+     * Gets the name of a file
+     * */
     public function getBasename(string $path): string
     {
         return (new SplFileInfo($path))->getBasename();
     }
 
+    /**
+     * Checks if a folder does not exist and creates it
+     * */
     public function folder(?string $path = null): object
     {
         $path = $this->replace($path === null ? $this->url_path : $path);
@@ -147,6 +184,9 @@ class Store
         return (object) ['status' => 'success', 'message' => $requestExist->message];
     }
 
+    /**
+     * Validate the extensions allowed for a file
+     * */
     public function validate(array $files, array $exts): object
     {
         foreach ($files as $key_file => $file) {
@@ -165,6 +205,9 @@ class Store
         return (object) ['status' => 'success', 'message' => 'Files have required extension'];
     }
 
+    /**
+     * Replaces invalid characters with valid characters
+     * */
     public function replace(string $str): string
     {
         $str = str_replace("á", "á", $str);
