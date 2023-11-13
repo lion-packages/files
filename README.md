@@ -23,4 +23,4 @@ composer require lion/files
 
 ## License
 
-The Lion-Files is open-sourced software licensed under the [MIT License](https://github.com/Sleon4/Lion-Files/blob/main/LICENSE).
+The <strong>files</strong> is open-sourced software licensed under the [MIT License](https://github.com/lion-packages/files/blob/main/LICENSE).
