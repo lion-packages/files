@@ -1,202 +1,240 @@
 <?php
 
+declare(strict_types=1);
+
 namespace LionFiles;
 
-class Store {
+use Exception;
+use SplFileInfo;
 
-	public static string $url_path = "storage/upload_files/";
+class Store
+{
+    protected string $url_path = 'storage/upload-files/';
 
-	public static function get(string $path): string|false {
-		return file_get_contents($path);
-	}
+    /**
+     * Gets the file from the defined path
+     * */
+    public function get(string $path): string|false
+    {
+        return file_get_contents($path);
+    }
 
-	public static function imageSize(string $path, string $data_path, string $imgSize): object {
-		$data_file = getimagesize("{$path}{$data_path}");
-		$union = "{$data_file[0]}x{$data_file[1]}";
+    /**
+     * Validates if the resolution of a file is valid
+     * */
+    public function imageSize(string $path, string $data_path, string $imgSize): object
+    {
+        $data_file = getimagesize("{$path}{$data_path}");
+        $union = "{$data_file[0]}x{$data_file[1]}";
 
-		if ($union != $imgSize) {
-			return (object) [
-				'status' => "error",
-				'message' => "the file '{$data_path}' does not have the requested dimensions '{$imgSize}'"
-			];
-		}
+        if ($union != $imgSize) {
+            return (object) [
+                'status' => 'error',
+                'message' => "The file '{$data_path}' does not have the requested dimensions '{$imgSize}'"
+            ];
+        }
 
-		return (object) [
-			'status' => "success",
-			'message' => "file '{$data_path}' meets requested dimensions '{$imgSize}'"
-		];
-	}
+        return (object) [
+            'status' => 'success',
+            'message' => "File '{$data_path}' meets requested dimensions '{$imgSize}'"
+        ];
+    }
 
-	public static function size(string $path, int $size): object {
-		$path = self::replace($path);
-		$file_size_kb = filesize($path) / 1024;
+    /**
+     * Validates if the weight of a file is valid in KB
+     * */
+    public function size(string $file, int|float $fileSize): object
+    {
+        $file = $this->replace($file);
+        $fileSizeKb = filesize($file) / 1024;
 
-		if ($file_size_kb > $size) {
-			return (object) [
-				'status' => "error",
-				'message' => "the file '{$path}' is larger than the requested size"
-			];
-		}
+        if ($fileSizeKb > $fileSize) {
+            return (object) ['status' => 'error', 'message' => "The file '{$file}' is larger than the requested size"];
+        }
 
-		return (object) [
-			'status' => "success",
-			'message' => "the file '{$path}' meets the requested size"
-		];
-	}
+        return (object) ['status' => 'success', 'message' => "The file '{$file}' meets the requested size"];
+    }
 
-	public static function view(string $path): array|object {
-		$responseExist = self::exist($path);
+    /**
+     * Returns an array with all the files and folders that are within a
+     * defined path
+     * */
+    public function view(string $path): array|object
+    {
+        $responseExist = $this->exist($path);
 
-		if ($responseExist->status === 'error') {
-			return $responseExist;
-		}
+        if ($responseExist->status === 'error') {
+            return $responseExist;
+        }
 
-		$path = self::replace($path);
-		$list = scandir($path, 1);
-		$data = [];
+        $path = $this->replace($path);
+        $list = scandir($path, 1);
+        $data = [];
 
-		for ($i = 0; $i < (count($list) - 2); $i++) {
-			array_push($data, "{$path}{$list[$i]}");
-		}
+        for ($i = 0; $i < (count($list) - 2); $i++) {
+            array_push($data, "{$path}{$list[$i]}");
+        }
 
-		return $data;
-	}
+        return $data;
+    }
 
-	public static function remove(string $path): object {
-		if (!unlink($path)) {
-			return (object) [
-				'status' => "error",
-				'message' => "the file '{$path}' has not been removed"
-			];
-		}
+    /**
+     * Remove files from a defined path
+     * */
+    public function remove(string $path): object
+    {
+        $exist = $this->exist($path);
 
-		return (object) [
-			'status' => "success",
-			'message' => "the file '{$path}' has been deleted"
-		];
-	}
+        if ($exist->status === 'error') {
+            return (object) [
+                'status' => 'error',
+                'message' => "The file '{$path}' could not be removed because it does not exist"
+            ];
+        }
 
-	public static function exist(string $path): object {
-		if (!file_exists($path)) {
-			return (object) [
-				'status' => "error",
-				'message' => "the file/folder '{$path}' does not exist"
-			];
-		}
+        try {
+            unlink($path);
 
-		return (object) [
-			'status' => "success",
-			'message' => "the file/folder '{$path}' exists"
-		];
-	}
+            return (object) ['status' => 'success', 'message' => "The file '{$path}' has been deleted"];
+        } catch (Exception $e) {
+            return (object) ['status' => 'error', 'message' => $e->getMessage()];
+        }
+    }
 
-	public static function rename(string $file, ?string $indicative = null): string {
-		if ($indicative != null) {
-			return self::replace($indicative) . "-" . md5(hash('sha256', uniqid())) . "." . self::getExtension($file);
-		} else {
-			return md5(hash('sha256', uniqid())) . "." . self::getExtension($file);
-		}
-	}
+    /**
+     * Checks if a file/folder exists in a defined path
+     * */
+    public function exist(string $path): object
+    {
+        if (!file_exists($path)) {
+            return (object) ['status' => 'error', 'message' => "The file/folder '{$path}' does not exist"];
+        }
 
-	public static function upload(string $tmp_name, string $name, ?string $path = null): object {
-		$path = $path === null ? self::$url_path : $path;
-		$path = self::replace($path);
-		self::folder($path);
+        return (object) ['status' => 'success', 'message' => "The file/folder '{$path}' exists"];
+    }
 
-		if (!move_uploaded_file($tmp_name, "{$path}{$name}")) {
-			return (object) [
-				'status' => "error",
-				'message' => "the file '{$name}' was not loaded"
-			];
-		}
+    /**
+     * Renames a file and allows adding a callsign to it
+     * */
+    public function rename(string $file, ?string $indicative = null): string
+    {
+        if ($indicative != null) {
+            return $this->replace($indicative) . "-" . md5(hash('sha256', uniqid())) . "." . $this->getExtension($file);
+        } else {
+            return md5(hash('sha256', uniqid())) . "." . $this->getExtension($file);
+        }
+    }
 
-		return (object) [
-			'status' => "success",
-			'message' => "the file '{$name}' was uploaded"
-		];
-	}
+    /**
+     * Allows uploading files to a defined path
+     * */
+    public function upload(string $tmpName, string $name, ?string $path = null): object
+    {
+        $path = $path === null ? $this->url_path : $path;
+        $path = $this->replace($path);
+        $this->folder($path);
 
-	public static function getExtension(string $path): string {
-		return (new \SplFileInfo($path))->getExtension();
-	}
+        if (!move_uploaded_file($tmpName, "{$path}{$name}")) {
+            return (object) ['status' => 'error', 'message' => "The file '{$name}' was not loaded"];
+        }
 
-	public static function getName(string $path): string {
-		return (new \SplFileInfo($path))->getBasename("." . self::getExtension($path));
-	}
+        return (object) ['status' => 'success', 'message' => "The file '{$name}' was uploaded"];
+    }
 
-	public static function getBasename(string $path): string {
-		return (new \SplFileInfo($path))->getBasename();
-	}
+    /**
+     * Gets the name extension of a file
+     * */
+    public function getExtension(string $path): string
+    {
+        return (new SplFileInfo($path))->getExtension();
+    }
 
-	public static function folder(?string $path = null): object {
-		$path = self::replace($path === null ? self::$url_path : $path);
+    /**
+     * Gets the name and extension of a file
+     * */
+    public function getName(string $path): string
+    {
+        return (new SplFileInfo($path))->getBasename("." . $this->getExtension($path));
+    }
 
-		$requestExist = self::exist($path);
-		if ($requestExist->status === 'error') {
-			if (mkdir($path, 0777, true)) {
-				return (object) [
-					'status' => "success",
-					'message' => "directory '{$path}' created"
-				];
-			} else {
-				return (object) [
-					'status' => "error",
-					'message' => "directory '{$path}' not created"
-				];
-			}
-		}
+    /**
+     * Gets the name of a file
+     * */
+    public function getBasename(string $path): string
+    {
+        return (new SplFileInfo($path))->getBasename();
+    }
 
-		return (object) [
-			'status' => "success",
-			'message' => $requestExist->message
-		];
-	}
+    /**
+     * Checks if a folder does not exist and creates it
+     * */
+    public function folder(?string $path = null): object
+    {
+        $path = $this->replace($path === null ? $this->url_path : $path);
+        $requestExist = $this->exist($path);
 
-	public static function validate(array $files, array $exts): object {
-		foreach ($files as $key_file => $file) {
-			$file_extension = self::getExtension($file);
+        if ($requestExist->status === 'error') {
+            if (mkdir($path, 0777, true)) {
+                return (object) ['status' => 'success', 'message' => "Directory '{$path}' created"];
+            } else {
+                return (object) ['status' => 'error', 'message' => "Directory '{$path}' not created"];
+            }
+        }
 
-			if (!in_array($file_extension, $exts)) {
-				return (object) [
-					'status' => "error",
-					'message' => "the file '{$file}' does not have the required extension"
-				];
-				break;
-			}
-		}
+        return (object) ['status' => 'success', 'message' => $requestExist->message];
+    }
 
-		return (object) [
-			'status' => "success",
-			'message' => "files have required extension"
-		];
-	}
+    /**
+     * Validate the extensions allowed for a file
+     * */
+    public function validate(array $files, array $exts): object
+    {
+        foreach ($files as $key_file => $file) {
+            $file_extension = $this->getExtension($file);
 
-	public static function replace(string $value): string {
-		$value = str_replace("á", "á", $value);
-		$value = str_replace("é", "é", $value);
-		$value = str_replace("í", "í", $value);
-		$value = str_replace("ó", "ó", $value);
-		$value = str_replace("ú", "ú", $value);
-		$value = str_replace("ñ", "ñ", $value);
-		$value = str_replace("Ã¡", "á", $value);
-		$value = str_replace("Ã©", "é", $value);
-		$value = str_replace("Ã", "í", $value);
-		$value = str_replace("Ã³", "ó", $value);
-		$value = str_replace("Ãº", "ú", $value);
-		$value = str_replace("Ã±", "ñ", $value);
-		$value = str_replace("Ã", "á", $value);
-		$value = str_replace("Ã‰", "é", $value);
-		$value = str_replace("Ã", "í", $value);
-		$value = str_replace("Ã“", "ó", $value);
-		$value = str_replace("Ãš", "ú", $value);
-		$value = str_replace("Ã‘", "ñ", $value);
-		$value = str_replace("&aacute;", "á", $value);
-		$value = str_replace("&eacute;", "é", $value);
-		$value = str_replace("&iacute;", "í", $value);
-		$value = str_replace("&oacute;", "ó", $value);
-		$value = str_replace("&uacute;", "ú", $value);
-		$value = str_replace("&ntilde;", "ñ", $value);
-		return $value;
-	}
+            if (!in_array($file_extension, $exts)) {
+                return (object) [
+                    'status' => 'error',
+                    'message' => "The file '{$file}' does not have the required extension"
+                ];
 
+                break;
+            }
+        }
+
+        return (object) ['status' => 'success', 'message' => 'Files have required extension'];
+    }
+
+    /**
+     * Replaces invalid characters with valid characters
+     * */
+    public function replace(string $str): string
+    {
+        $str = str_replace("á", "á", $str);
+        $str = str_replace("é", "é", $str);
+        $str = str_replace("í", "í", $str);
+        $str = str_replace("ó", "ó", $str);
+        $str = str_replace("ú", "ú", $str);
+        $str = str_replace("ñ", "ñ", $str);
+        $str = str_replace("Ã¡", "á", $str);
+        $str = str_replace("Ã©", "é", $str);
+        $str = str_replace("Ã", "í", $str);
+        $str = str_replace("Ã³", "ó", $str);
+        $str = str_replace("Ãº", "ú", $str);
+        $str = str_replace("Ã±", "ñ", $str);
+        $str = str_replace("Ã", "á", $str);
+        $str = str_replace("Ã‰", "é", $str);
+        $str = str_replace("Ã", "í", $str);
+        $str = str_replace("Ã“", "ó", $str);
+        $str = str_replace("Ãš", "ú", $str);
+        $str = str_replace("Ã‘", "ñ", $str);
+        $str = str_replace("&aacute;", "á", $str);
+        $str = str_replace("&eacute;", "é", $str);
+        $str = str_replace("&iacute;", "í", $str);
+        $str = str_replace("&oacute;", "ó", $str);
+        $str = str_replace("&uacute;", "ú", $str);
+        $str = str_replace("&ntilde;", "ñ", $str);
+
+        return $str;
+    }
 }
