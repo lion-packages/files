@@ -5,14 +5,11 @@ declare(strict_types=1);
 namespace Tests;
 
 use Lion\Files\Store;
-use Lion\Files\Traits\FilesTrait;
 use Lion\Files\Zip;
-use PHPUnit\Framework\TestCase;
+use Lion\Test\Test;
 
-class ZipTest extends TestCase
+class ZipTest extends Test
 {
-    use FilesTrait;
-
     const URL_PATH = './storage/';
     const ZIP_NAME = 'zip_file.zip';
     const ZIP_NEW_NAME = 'new_zip_file.zip';
