@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace LionFiles;
+namespace Lion\Files;
 
 use Exception;
 use SplFileInfo;

@@ -4,16 +4,13 @@ declare(strict_types=1);
 
 namespace Tests;
 
-use LionFiles\Store;
-use LionFiles\Traits\FilesTrait;
-use PHPUnit\Framework\TestCase;
+use Lion\Files\Store;
+use Lion\Test\Test;
 
-class StoreTest extends TestCase
+class StoreTest extends Test
 {
-    use FilesTrait;
-
     const URL_PATH = './storage/';
-    const IMAGE_SIZE = '100x200';
+    const IMAGE_SIZE = '100x100';
     const FILE_NAME = 'image.png';
     const INDICATIVE = 'FILE';
     const EXTENSIONS = ['png'];
@@ -32,13 +29,6 @@ class StoreTest extends TestCase
         $this->rmdirRecursively(self::URL_PATH);
     }
 
-    private function createImage(int $x, int $y): void
-    {
-        $image = imagecreatetruecolor($x, $y);
-        imagefill($image, 0, 0, imagecolorallocate($image, 255, 255, 255));
-        imagepng($image, self::URL_PATH . self::FILE_NAME);
-    }
-
     public function testGet(): void
     {
         $this->assertSame(file_get_contents('./LICENSE'), $this->store->get('./LICENSE'));
@@ -46,7 +36,7 @@ class StoreTest extends TestCase
 
     public function testImageSize(): void
     {
-        $this->createImage(100, 200);
+        $this->createImage();
         $res = $this->store->imageSize(self::URL_PATH, self::FILE_NAME, self::IMAGE_SIZE);
 
         $this->assertIsObject($res);
@@ -68,7 +58,7 @@ class StoreTest extends TestCase
 
     public function testSize(): void
     {
-        $this->createImage(100, 200);
+        $this->createImage();
         $size = filesize(self::URL_PATH . self::FILE_NAME) / 1024;
         $res = $this->store->size(self::URL_PATH . self::FILE_NAME, $size);
 
@@ -80,7 +70,7 @@ class StoreTest extends TestCase
 
     public function testSizeError(): void
     {
-        $this->createImage(100, 200);
+        $this->createImage();
         $res = $this->store->size(self::URL_PATH . self::FILE_NAME, 0.2);
 
         $this->assertIsObject($res);
@@ -91,7 +81,7 @@ class StoreTest extends TestCase
 
     public function testView(): void
     {
-        $this->createImage(100, 200);
+        $this->createImage();
         $res = $this->store->view(self::URL_PATH);
 
         $this->assertIsArray($res);
@@ -100,7 +90,7 @@ class StoreTest extends TestCase
 
     public function testViewError(): void
     {
-        $this->createImage(100, 200);
+        $this->createImage();
         $res = $this->store->view('./example/');
 
         $this->assertIsObject($res);
@@ -111,7 +101,7 @@ class StoreTest extends TestCase
 
     public function testRemove(): void
     {
-        $this->createImage(100, 200);
+        $this->createImage();
 
         $res = $this->store->remove(self::URL_PATH . self::FILE_NAME);
 
@@ -143,7 +133,7 @@ class StoreTest extends TestCase
 
     public function testExistWithFile(): void
     {
-        $this->createImage(100, 200);
+        $this->createImage();
         $res = $this->store->exist(self::URL_PATH . self::FILE_NAME);
 
         $this->assertIsObject($res);

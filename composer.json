@@ -5,7 +5,7 @@
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "LionFiles\\": "src/LionFiles/"
+            "Lion\\Files\\": "src/LionFiles/"
         }
     },
     "autoload-dev": {
@@ -17,6 +17,7 @@
         "php": ">=8.2"
     },
     "require-dev": {
-        "phpunit/phpunit": "^10.4"
+        "phpunit/phpunit": "^10.4",
+        "lion/test": "^1.4"
     }
 }

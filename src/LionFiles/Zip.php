@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace LionFiles;
+namespace Lion\Files;
 
-use LionFiles\Store;
+use Lion\Files\Store;
 use ZipArchive;
 
 class Zip
