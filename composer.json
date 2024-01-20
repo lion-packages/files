@@ -5,7 +5,7 @@
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "LionFiles\\": "src/LionFiles/"
+            "Lion\\Files\\": "src/LionFiles/"
         }
     },
     "autoload-dev": {

@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Tests;
 
-use LionFiles\Store;
-use LionFiles\Traits\FilesTrait;
-use LionFiles\Zip;
+use Lion\Files\Store;
+use Lion\Files\Traits\FilesTrait;
+use Lion\Files\Zip;
 use PHPUnit\Framework\TestCase;
 
 class ZipTest extends TestCase

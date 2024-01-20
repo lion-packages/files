@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace LionFiles\Traits;
+namespace Lion\Files\Traits;
 
 use ReflectionClass;
 

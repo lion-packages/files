@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tests;
 
-use LionFiles\Store;
-use LionFiles\Traits\FilesTrait;
+use Lion\Files\Store;
+use Lion\Files\Traits\FilesTrait;
 use PHPUnit\Framework\TestCase;
 
 class StoreTest extends TestCase
