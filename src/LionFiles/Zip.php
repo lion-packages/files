@@ -11,6 +11,7 @@ class Zip
 {
     private Store $store;
 	private ZipArchive $zipArchive;
+
 	private array $deleteFiles = [];
 
     public function __construct()
@@ -24,8 +25,8 @@ class Zip
      * */
 	public function decompress(string $from, string $to): void
     {
-        $this->zipArchive->open($from);
-        $this->zipArchive->extractTo($to);
+        $this->zipArchive->open($this->store->normalizePath($from));
+        $this->zipArchive->extractTo($this->store->normalizePath($to));
         $this->zipArchive->close();
 	}
 
@@ -34,7 +35,7 @@ class Zip
      * */
 	public function create(string $zipName): Zip
     {
-		$this->zipArchive->open($zipName, ZipArchive::CREATE);
+		$this->zipArchive->open($this->store->normalizePath($zipName), ZipArchive::CREATE);
 
         return $this;
 	}
@@ -44,7 +45,7 @@ class Zip
      * */
 	public function add(array $files): Zip
     {
-		foreach ($files as $key => $file) {
+		foreach ($files as $file) {
 			$this->zipArchive->addFile($file, $this->store->getBasename($file));
 		}
 
@@ -57,8 +58,12 @@ class Zip
 	public function addUpload(string $path, string $file, string $fileName): Zip
     {
 		$this->store->upload($file, $fileName, $path);
-		$this->zipArchive->addFile($path . $fileName, $this->store->getBasename($fileName));
-		array_push($this->deleteFiles, $path . $fileName);
+
+        $filePath = $this->store->normalizePath($path . $fileName);
+
+		$this->zipArchive->addFile($filePath, $this->store->getBasename($fileName));
+
+		array_push($this->deleteFiles, $filePath);
 
         return $this;
 	}
@@ -70,7 +75,7 @@ class Zip
     {
         $this->zipArchive->close();
 
-        foreach ($this->deleteFiles as $key => $file) {
+        foreach ($this->deleteFiles as $file) {
             $this->store->remove($file);
         }
     }
