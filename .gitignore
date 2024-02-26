@@ -1,3 +1,4 @@
 /vendor/
 /storage/
 index.php
+.phpunit.result.cache
