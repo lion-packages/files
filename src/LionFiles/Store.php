@@ -9,34 +9,54 @@ use SplFileInfo;
 
 class Store
 {
-    protected string $url_path = 'storage/upload-files/';
+    protected string $urlPath = 'storage/upload-files/';
+
+    /**
+     * Normalize routes depending on OS type
+     *
+     * @param  string $path [Defined route]
+     *
+     * @return string
+     */
+    public function normalizePath(string $path): string
+    {
+        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+            $path = str_replace('/', '\\', $path);
+            $path = str_replace("\\\\", "\\", $path);
+        } else {
+            $path = str_replace('\\', '/', $path);
+            $path = str_replace('//', '/', $path);
+        }
+
+        return $path;
+    }
 
     /**
      * Gets the file from the defined path
      * */
     public function get(string $path): string|false
     {
-        return file_get_contents($path);
+        return file_get_contents($this->normalizePath($path));
     }
 
     /**
      * Validates if the resolution of a file is valid
      * */
-    public function imageSize(string $path, string $data_path, string $imgSize): object
+    public function imageSize(string $path, string $dataPath, string $imgSize): object
     {
-        $data_file = getimagesize("{$path}{$data_path}");
-        $union = "{$data_file[0]}x{$data_file[1]}";
+        $dataFile = getimagesize($this->normalizePath("{$path}{$dataPath}"));
+        $union = "{$dataFile[0]}x{$dataFile[1]}";
 
         if ($union != $imgSize) {
             return (object) [
                 'status' => 'error',
-                'message' => "The file '{$data_path}' does not have the requested dimensions '{$imgSize}'"
+                'message' => "The file '{$dataPath}' does not have the requested dimensions '{$imgSize}'"
             ];
         }
 
         return (object) [
             'status' => 'success',
-            'message' => "File '{$data_path}' meets requested dimensions '{$imgSize}'"
+            'message' => "File '{$dataPath}' meets requested dimensions '{$imgSize}'"
         ];
     }
 
@@ -46,7 +66,7 @@ class Store
     public function size(string $file, int|float $fileSize): object
     {
         $file = $this->replace($file);
-        $fileSizeKb = filesize($file) / 1024;
+        $fileSizeKb = filesize($this->normalizePath($file)) / 1024;
 
         if ($fileSizeKb > $fileSize) {
             return (object) ['status' => 'error', 'message' => "The file '{$file}' is larger than the requested size"];
@@ -61,18 +81,18 @@ class Store
      * */
     public function view(string $path): array|object
     {
-        $responseExist = $this->exist($path);
+        $responseExist = $this->exist($this->normalizePath($path));
 
         if ($responseExist->status === 'error') {
             return $responseExist;
         }
 
         $path = $this->replace($path);
-        $list = scandir($path, 1);
+        $list = scandir($this->normalizePath($path), 1);
         $data = [];
 
         for ($i = 0; $i < (count($list) - 2); $i++) {
-            array_push($data, "{$path}{$list[$i]}");
+            array_push($data, $this->normalizePath("{$path}{$list[$i]}"));
         }
 
         return $data;
@@ -83,7 +103,7 @@ class Store
      * */
     public function remove(string $path): object
     {
-        $exist = $this->exist($path);
+        $exist = $this->exist($this->normalizePath($path));
 
         if ($exist->status === 'error') {
             return (object) [
@@ -93,7 +113,7 @@ class Store
         }
 
         try {
-            unlink($path);
+            unlink($this->normalizePath($path));
 
             return (object) ['status' => 'success', 'message' => "The file '{$path}' has been deleted"];
         } catch (Exception $e) {
@@ -106,7 +126,7 @@ class Store
      * */
     public function exist(string $path): object
     {
-        if (!file_exists($path)) {
+        if (!file_exists($this->normalizePath($path))) {
             return (object) ['status' => 'error', 'message' => "The file/folder '{$path}' does not exist"];
         }
 
@@ -130,11 +150,10 @@ class Store
      * */
     public function upload(string $tmpName, string $name, ?string $path = null): object
     {
-        $path = $path === null ? $this->url_path : $path;
-        $path = $this->replace($path);
+        $path = $this->normalizePath($this->replace($path === null ? $this->urlPath : $path));
         $this->folder($path);
 
-        if (!move_uploaded_file($tmpName, "{$path}{$name}")) {
+        if (!move_uploaded_file($tmpName, $this->normalizePath("{$path}{$name}"))) {
             return (object) ['status' => 'error', 'message' => "The file '{$name}' was not loaded"];
         }
 
@@ -146,7 +165,7 @@ class Store
      * */
     public function getExtension(string $path): string
     {
-        return (new SplFileInfo($path))->getExtension();
+        return (new SplFileInfo($this->normalizePath($path)))->getExtension();
     }
 
     /**
@@ -154,7 +173,7 @@ class Store
      * */
     public function getName(string $path): string
     {
-        return (new SplFileInfo($path))->getBasename("." . $this->getExtension($path));
+        return (new SplFileInfo($this->normalizePath($path)))->getBasename("." . $this->getExtension($path));
     }
 
     /**
@@ -162,7 +181,7 @@ class Store
      * */
     public function getBasename(string $path): string
     {
-        return (new SplFileInfo($path))->getBasename();
+        return (new SplFileInfo($this->normalizePath($path)))->getBasename();
     }
 
     /**
@@ -170,7 +189,7 @@ class Store
      * */
     public function folder(?string $path = null): object
     {
-        $path = $this->replace($path === null ? $this->url_path : $path);
+        $path = $this->normalizePath($this->replace($path === null ? $this->urlPath : $path));
         $requestExist = $this->exist($path);
 
         if ($requestExist->status === 'error') {
@@ -189,7 +208,7 @@ class Store
      * */
     public function validate(array $files, array $exts): object
     {
-        foreach ($files as $key_file => $file) {
+        foreach ($files as $file) {
             $file_extension = $this->getExtension($file);
 
             if (!in_array($file_extension, $exts)) {
