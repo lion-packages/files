@@ -14,21 +14,13 @@ class Store
     /**
      * Normalize routes depending on OS type
      *
-     * @param  string $path [Defined route]
+     * @param string $path [Defined route]
      *
      * @return string
      */
     public function normalizePath(string $path): string
     {
-        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
-            $path = str_replace('/', '\\', $path);
-            $path = str_replace("\\\\", "\\", $path);
-        } else {
-            $path = str_replace('\\', '/', $path);
-            $path = str_replace('//', '/', $path);
-        }
-
-        return $path;
+        return implode(DIRECTORY_SEPARATOR, explode('/', $path));
     }
 
     /**
