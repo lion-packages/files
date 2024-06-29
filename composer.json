@@ -1,6 +1,6 @@
 {
     "name": "lion/files",
-    "description": "library created with the function of working internal system files",
+    "description": "Library created with the function of working internal system files",
     "type": "library",
     "license": "MIT",
     "autoload": {
@@ -14,10 +14,10 @@
         }
     },
     "require": {
-        "php": ">=8.2"
+        "php": ">=8.3"
     },
     "require-dev": {
-        "phpunit/phpunit": "^10.4",
-        "lion/test": "^1.4"
+        "lion/test": "^2.0",
+        "phpunit/phpunit": "^11.2"
     }
 }
