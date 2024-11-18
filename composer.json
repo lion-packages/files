@@ -14,10 +14,11 @@
         }
     },
     "require": {
-        "php": ">=8.3"
+        "php": ">=8.3",
+        "ext-mbstring": "*"
     },
     "require-dev": {
-        "lion/test": "^2.0",
-        "phpunit/phpunit": "^11.2"
+        "phpunit/phpunit": "^11.4",
+        "lion/test": "^2.1"
     }
 }

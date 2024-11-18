@@ -37,6 +37,54 @@ class Store
     }
 
     /**
+     * Gets the namespace of a class through a defined path
+     *
+     * @param string $file [File path]
+     * @param string $namespace [Namespace for the file]
+     * @param string $split [Separator to obtain the namespace]
+     *
+     * @return string
+     */
+    public function getNamespaceFromFile(string $file, string $namespace, string $split = '/'): string
+    {
+        $splitFile = explode($split, $file);
+
+        $namespace = str_replace("/", "\\", "{$namespace}{$splitFile[1]}");
+
+        $namespace = str_replace('.php', '',  $namespace);
+
+        return trim($namespace);
+    }
+
+    /**
+     * Get files from a defined path
+     *
+     * @param string $folder [Defined route]
+     *
+     * @return array<string>
+     */
+    public function getFiles(string $folder): array
+    {
+        $files = [];
+
+        $content = scandir($folder);
+
+        foreach ($content as $element) {
+            if ($element != '.' && $element != '..') {
+                $path = $folder . '/' . $element;
+
+                if (is_dir($path)) {
+                    $files = array_merge($files, $this->getFiles($path));
+                } else {
+                    $files[] = realpath($path);
+                }
+            }
+        }
+
+        return $files;
+    }
+
+    /**
      * Gets the file from the defined path
      *
      * @param string $path [Defined route]

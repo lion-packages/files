@@ -4,12 +4,16 @@ declare(strict_types=1);
 
 namespace Tests;
 
+use Exception;
 use Lion\Files\Store;
 use Lion\Test\Test;
+use PHPUnit\Framework\Attributes\Test as Testing;
+use Tests\Providers\CustomClassProvider;
 
 class StoreTest extends Test
 {
     private const string URL_PATH = './storage/';
+    private const string PROVIDERS_URL_PATH = './tests/Providers/';
     private const string IMAGE_SIZE = '100x100';
     private const string FILE_NAME = 'image.png';
     private const string INDICATIVE = 'FILE';
@@ -29,12 +33,40 @@ class StoreTest extends Test
         $this->rmdirRecursively(self::URL_PATH);
     }
 
-    public function testGet(): void
+    #[Testing]
+    public function getNamespaceFromFile(): void
+    {
+        $namespace = $this->store->getNamespaceFromFile(
+            self::PROVIDERS_URL_PATH . 'CustomClassProvider.php',
+            'Tests\\Providers\\',
+            'Providers/'
+        );
+
+        $this->assertIsString($namespace);
+        $this->assertSame(CustomClassProvider::class, $namespace);
+    }
+
+    #[Testing]
+    public function getFiles(): void
+    {
+        $providerFiles = [
+            '/var/www/html/tests/Providers/CustomClassProvider.php',
+        ];
+
+        $files = $this->store->getFiles(self::PROVIDERS_URL_PATH);
+
+        $this->assertIsArray($files);
+        $this->assertSame($providerFiles, $files);
+    }
+
+    #[Testing]
+    public function get(): void
     {
         $this->assertSame(file_get_contents('./LICENSE'), $this->store->get('./LICENSE'));
     }
 
-    public function testImageSize(): void
+    #[Testing]
+    public function imageSize(): void
     {
         $this->createImage();
 
@@ -46,7 +78,8 @@ class StoreTest extends Test
         $this->assertSame('success', $res->status);
     }
 
-    public function testImageSizeError(): void
+    #[Testing]
+    public function imageSizeError(): void
     {
         $this->createImage(100, 300);
 
@@ -58,7 +91,8 @@ class StoreTest extends Test
         $this->assertSame('error', $res->status);
     }
 
-    public function testSize(): void
+    #[Testing]
+    public function tsize(): void
     {
         $this->createImage();
 
@@ -72,7 +106,8 @@ class StoreTest extends Test
         $this->assertSame('success', $res->status);
     }
 
-    public function testSizeError(): void
+    #[Testing]
+    public function sizeError(): void
     {
         $this->createImage();
 
@@ -84,7 +119,8 @@ class StoreTest extends Test
         $this->assertSame('error', $res->status);
     }
 
-    public function testView(): void
+    #[Testing]
+    public function view(): void
     {
         $this->createImage();
 
@@ -94,7 +130,8 @@ class StoreTest extends Test
         $this->assertCount(1, $res);
     }
 
-    public function testViewError(): void
+    #[Testing]
+    public function viewError(): void
     {
         $this->createImage();
 
@@ -106,7 +143,11 @@ class StoreTest extends Test
         $this->assertSame('error', $res->status);
     }
 
-    public function testRemove(): void
+    /**
+     * @throws Exception
+     */
+    #[Testing]
+    public function remove(): void
     {
         $this->createImage();
 
@@ -118,7 +159,11 @@ class StoreTest extends Test
         $this->assertSame('success', $res->status);
     }
 
-    public function testRemoveWithMissingFile(): void
+    /**
+     * @throws Exception
+     */
+    #[Testing]
+    public function removeWithMissingFile(): void
     {
         $res = $this->store->remove(self::URL_PATH . self::FILE_NAME);
 
@@ -128,7 +173,8 @@ class StoreTest extends Test
         $this->assertSame('error', $res->status);
     }
 
-    public function testExist(): void
+    #[Testing]
+    public function exist(): void
     {
         $res = $this->store->exist(self::URL_PATH);
 
@@ -138,7 +184,8 @@ class StoreTest extends Test
         $this->assertSame('success', $res->status);
     }
 
-    public function testExistWithFile(): void
+    #[Testing]
+    public function existWithFile(): void
     {
         $this->createImage();
 
@@ -150,7 +197,8 @@ class StoreTest extends Test
         $this->assertSame('success', $res->status);
     }
 
-    public function testExistError(): void
+    #[Testing]
+    public function existError(): void
     {
         $res = $this->store->exist(self::URL_PATH . self::FILE_NAME);
 
@@ -160,34 +208,40 @@ class StoreTest extends Test
         $this->assertSame('error', $res->status);
     }
 
-    public function testRenameWithoutIndicative(): void
+    #[Testing]
+    public function renameWithoutIndicative(): void
     {
         $this->assertMatchesRegularExpression('/^[a-f0-9]{32}\.png$/', $this->store->rename(self::FILE_NAME));
     }
 
-    public function testRenameWithIndicative(): void
+    #[Testing]
+    public function renameWithIndicative(): void
     {
         $result = $this->store->rename(self::FILE_NAME, self::INDICATIVE);
 
         $this->assertMatchesRegularExpression('/^FILE-[a-f0-9]{32}\.png$/', $result);
     }
 
-    public function testGetExtension(): void
+    #[Testing]
+    public function getExtension(): void
     {
         $this->assertSame('png', $this->store->getExtension(self::FILE_NAME));
     }
 
-    public function testGetName(): void
+    #[Testing]
+    public function getName(): void
     {
         $this->assertSame('image', $this->store->getName(self::URL_PATH . self::FILE_NAME));
     }
 
-    public function testGetBaseName(): void
+    #[Testing]
+    public function getBaseName(): void
     {
         $this->assertSame('image', $this->store->getName(self::URL_PATH . self::FILE_NAME));
     }
 
-    public function testFolder(): void
+    #[Testing]
+    public function folder(): void
     {
         $res = $this->store->folder(self::URL_PATH);
 
@@ -198,7 +252,8 @@ class StoreTest extends Test
         $this->assertFileExists(self::URL_PATH);
     }
 
-    public function testFolderCustomSuccess(): void
+    #[Testing]
+    public function folderCustomSuccess(): void
     {
         $res = $this->store->folder(self::URL_PATH . 'new/');
 
@@ -209,7 +264,8 @@ class StoreTest extends Test
         $this->assertFileExists(self::URL_PATH . 'new/');
     }
 
-    public function testValidate(): void
+    #[Testing]
+    public function validate(): void
     {
         $res = $this->store->validate([self::FILE_NAME], self::EXTENSIONS);
 
@@ -219,7 +275,8 @@ class StoreTest extends Test
         $this->assertSame('success', $res->status);
     }
 
-    public function testValidateError(): void
+    #[Testing]
+    public function validateError(): void
     {
         $res = $this->store->validate([self::FILE_NAME], ['php']);
 
@@ -229,7 +286,8 @@ class StoreTest extends Test
         $this->assertSame('error', $res->status);
     }
 
-    public function testReplace(): void
+    #[Testing]
+    public function replace(): void
     {
         $res = mb_convert_encoding('Ã¡Ã©Ã­Ã³ÃºÃ±', 'ISO-8859-1', 'UTF-8');
 
