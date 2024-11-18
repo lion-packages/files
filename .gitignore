@@ -3,3 +3,4 @@
 /storage/
 index.php
 .phpunit.result.cache
+/tests/build/
