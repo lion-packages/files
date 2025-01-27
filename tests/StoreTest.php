@@ -50,7 +50,7 @@ class StoreTest extends Test
     public function getFiles(): void
     {
         $providerFiles = [
-            '/var/www/html/tests/Providers/CustomClassProvider.php',
+            __DIR__ . '/Providers/CustomClassProvider.php',
         ];
 
         $files = $this->store->getFiles(self::PROVIDERS_URL_PATH);
