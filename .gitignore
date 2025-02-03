@@ -1,6 +1,7 @@
 /.idea/
 /vendor/
 /storage/
-index.php
-.phpunit.result.cache
 /tests/build/
+.phpunit.result.cache
+composer.lock
+index.php
