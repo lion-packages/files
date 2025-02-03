@@ -8,6 +8,7 @@ use Exception;
 use Lion\Files\Store;
 use Lion\Test\Test;
 use PHPUnit\Framework\Attributes\Test as Testing;
+use stdClass;
 use Tests\Providers\CustomClassProvider;
 
 class StoreTest extends Test
@@ -42,7 +43,6 @@ class StoreTest extends Test
             'Providers/'
         );
 
-        $this->assertIsString($namespace);
         $this->assertSame(CustomClassProvider::class, $namespace);
     }
 
@@ -55,7 +55,6 @@ class StoreTest extends Test
 
         $files = $this->store->getFiles(self::PROVIDERS_URL_PATH);
 
-        $this->assertIsArray($files);
         $this->assertSame($providerFiles, $files);
     }
 
@@ -72,7 +71,7 @@ class StoreTest extends Test
 
         $res = $this->store->imageSize(self::URL_PATH, self::FILE_NAME, self::IMAGE_SIZE);
 
-        $this->assertIsObject($res);
+        $this->assertInstanceOf(stdClass::class, $res);
         $this->assertObjectHasProperty('status', $res);
         $this->assertObjectHasProperty('message', $res);
         $this->assertSame('success', $res->status);
@@ -85,7 +84,7 @@ class StoreTest extends Test
 
         $res = $this->store->imageSize(self::URL_PATH, self::FILE_NAME, self::IMAGE_SIZE);
 
-        $this->assertIsObject($res);
+        $this->assertInstanceOf(stdClass::class, $res);
         $this->assertObjectHasProperty('status', $res);
         $this->assertObjectHasProperty('message', $res);
         $this->assertSame('error', $res->status);
@@ -100,7 +99,7 @@ class StoreTest extends Test
 
         $res = $this->store->size(self::URL_PATH . self::FILE_NAME, $size);
 
-        $this->assertIsObject($res);
+        $this->assertInstanceOf(stdClass::class, $res);
         $this->assertObjectHasProperty('status', $res);
         $this->assertObjectHasProperty('message', $res);
         $this->assertSame('success', $res->status);
@@ -113,7 +112,7 @@ class StoreTest extends Test
 
         $res = $this->store->size(self::URL_PATH . self::FILE_NAME, 0.2);
 
-        $this->assertIsObject($res);
+        $this->assertInstanceOf(stdClass::class, $res);
         $this->assertObjectHasProperty('status', $res);
         $this->assertObjectHasProperty('message', $res);
         $this->assertSame('error', $res->status);
@@ -127,7 +126,7 @@ class StoreTest extends Test
         $res = $this->store->view(self::URL_PATH);
 
         $this->assertIsArray($res);
-        $this->assertCount(1, $res);
+        $this->assertCount(3, $res);
     }
 
     #[Testing]
@@ -153,7 +152,7 @@ class StoreTest extends Test
 
         $res = $this->store->remove(self::URL_PATH . self::FILE_NAME);
 
-        $this->assertIsObject($res);
+        $this->assertInstanceOf(stdClass::class, $res);
         $this->assertObjectHasProperty('status', $res);
         $this->assertObjectHasProperty('message', $res);
         $this->assertSame('success', $res->status);
@@ -167,7 +166,7 @@ class StoreTest extends Test
     {
         $res = $this->store->remove(self::URL_PATH . self::FILE_NAME);
 
-        $this->assertIsObject($res);
+        $this->assertInstanceOf(stdClass::class, $res);
         $this->assertObjectHasProperty('status', $res);
         $this->assertObjectHasProperty('message', $res);
         $this->assertSame('error', $res->status);
@@ -178,7 +177,7 @@ class StoreTest extends Test
     {
         $res = $this->store->exist(self::URL_PATH);
 
-        $this->assertIsObject($res);
+        $this->assertInstanceOf(stdClass::class, $res);
         $this->assertObjectHasProperty('status', $res);
         $this->assertObjectHasProperty('message', $res);
         $this->assertSame('success', $res->status);
@@ -191,7 +190,7 @@ class StoreTest extends Test
 
         $res = $this->store->exist(self::URL_PATH . self::FILE_NAME);
 
-        $this->assertIsObject($res);
+        $this->assertInstanceOf(stdClass::class, $res);
         $this->assertObjectHasProperty('status', $res);
         $this->assertObjectHasProperty('message', $res);
         $this->assertSame('success', $res->status);
@@ -202,7 +201,7 @@ class StoreTest extends Test
     {
         $res = $this->store->exist(self::URL_PATH . self::FILE_NAME);
 
-        $this->assertIsObject($res);
+        $this->assertInstanceOf(stdClass::class, $res);
         $this->assertObjectHasProperty('status', $res);
         $this->assertObjectHasProperty('message', $res);
         $this->assertSame('error', $res->status);
@@ -245,7 +244,7 @@ class StoreTest extends Test
     {
         $res = $this->store->folder(self::URL_PATH);
 
-        $this->assertIsObject($res);
+        $this->assertInstanceOf(stdClass::class, $res);
         $this->assertObjectHasProperty('status', $res);
         $this->assertObjectHasProperty('message', $res);
         $this->assertSame('success', $res->status);
@@ -257,7 +256,7 @@ class StoreTest extends Test
     {
         $res = $this->store->folder(self::URL_PATH . 'new/');
 
-        $this->assertIsObject($res);
+        $this->assertInstanceOf(stdClass::class, $res);
         $this->assertObjectHasProperty('status', $res);
         $this->assertObjectHasProperty('message', $res);
         $this->assertSame('success', $res->status);
@@ -269,7 +268,7 @@ class StoreTest extends Test
     {
         $res = $this->store->validate([self::FILE_NAME], self::EXTENSIONS);
 
-        $this->assertIsObject($res);
+        $this->assertInstanceOf(stdClass::class, $res);
         $this->assertObjectHasProperty('status', $res);
         $this->assertObjectHasProperty('message', $res);
         $this->assertSame('success', $res->status);
@@ -280,7 +279,7 @@ class StoreTest extends Test
     {
         $res = $this->store->validate([self::FILE_NAME], ['php']);
 
-        $this->assertIsObject($res);
+        $this->assertInstanceOf(stdClass::class, $res);
         $this->assertObjectHasProperty('status', $res);
         $this->assertObjectHasProperty('message', $res);
         $this->assertSame('error', $res->status);

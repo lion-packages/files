@@ -41,7 +41,7 @@ class Store
      *
      * @param string $file [File path]
      * @param string $namespace [Namespace for the file]
-     * @param string $split [Separator to obtain the namespace]
+     * @param non-empty-string $split [Separator to obtain the namespace]
      *
      * @return string
      */
@@ -51,7 +51,7 @@ class Store
 
         $namespace = str_replace("/", "\\", "{$namespace}{$splitFile[1]}");
 
-        $namespace = str_replace('.php', '',  $namespace);
+        $namespace = str_replace('.php', '', $namespace);
 
         return trim($namespace);
     }
@@ -61,12 +61,13 @@ class Store
      *
      * @param string $folder [Defined route]
      *
-     * @return array<string>
+     * @return array<int, string>
      */
     public function getFiles(string $folder): array
     {
         $files = [];
 
+        /** @var list<string> $content */
         $content = scandir($folder);
 
         foreach ($content as $element) {
@@ -76,7 +77,10 @@ class Store
                 if (is_dir($path)) {
                     $files = array_merge($files, $this->getFiles($path));
                 } else {
-                    $files[] = realpath($path);
+                    /** @var non-empty-string $realPath */
+                    $realPath = realpath($path);
+
+                    $files[] = $realPath;
                 }
             }
         }
@@ -107,18 +111,21 @@ class Store
      */
     public function imageSize(string $path, string $fileName, string $imgSize): stdClass
     {
+        /** @var array<int, string> $dataFile */
         $dataFile = getimagesize($this->normalizePath("{$path}{$fileName}"));
 
         $union = "{$dataFile[0]}x{$dataFile[1]}";
 
         if ($union != $imgSize) {
             return (object) [
+                'code' => 500,
                 'status' => 'error',
                 'message' => "The file '{$fileName}' does not have the requested dimensions '{$imgSize}'",
             ];
         }
 
         return (object) [
+            'code' => 200,
             'status' => 'success',
             'message' => "File '{$fileName}' meets requested dimensions '{$imgSize}'",
         ];
@@ -128,7 +135,7 @@ class Store
      * Validates if the weight of a file is valid in KB
      *
      * @param string $file [File]
-     * @param int|float $fileSize [File]
+     * @param int|float $fileSize [File size]
      *
      * @return stdClass
      */
@@ -140,12 +147,14 @@ class Store
 
         if ($fileSizeKb > $fileSize) {
             return (object) [
+                'code' => 500,
                 'status' => 'error',
                 'message' => "The file '{$file}' is larger than the requested size",
             ];
         }
 
         return (object) [
+            'code' => 200,
             'status' => 'success',
             'message' => "The file '{$file}' meets the requested size",
         ];
@@ -163,17 +172,20 @@ class Store
     {
         $responseExist = $this->exist($this->normalizePath($path));
 
-        if ($responseExist->status === 'error') {
+        if ('error' === $responseExist->status) {
             return $responseExist;
         }
 
         $path = $this->replace($path);
 
+        /** @var list<string> $list */
         $list = scandir($this->normalizePath($path), 1);
+
+        $size = count($list);
 
         $data = [];
 
-        for ($i = 0; $i < (count($list) - 2); $i++) {
+        for ($i = 0; $i < $size; $i++) {
             $data[] = $this->normalizePath("{$path}{$list[$i]}");
         }
 
@@ -193,8 +205,9 @@ class Store
     {
         $exist = $this->exist($this->normalizePath($path));
 
-        if ($exist->status === 'error') {
+        if ('error' === $exist->status) {
             return (object) [
+                'code' => 500,
                 'status' => 'error',
                 'message' => "The file '{$path}' could not be removed because it does not exist",
             ];
@@ -204,11 +217,13 @@ class Store
             unlink($this->normalizePath($path));
 
             return (object) [
+                'code' => 200,
                 'status' => 'success',
                 'message' => "The file '{$path}' has been deleted",
             ];
         } catch (Exception $e) {
             return (object) [
+                'code' => $e->getCode(),
                 'status' => 'error',
                 'message' => $e->getMessage(),
             ];
@@ -226,12 +241,14 @@ class Store
     {
         if (!file_exists($this->normalizePath($path))) {
             return (object) [
+                'code' => 500,
                 'status' => 'error',
                 'message' => "The file/folder '{$path}' does not exist",
             ];
         }
 
         return (object) [
+            'code' => 200,
             'status' => 'success',
             'message' => "The file/folder '{$path}' exists",
         ];
@@ -248,9 +265,9 @@ class Store
     public function rename(string $file, ?string $indicative = null): string
     {
         if ($indicative != null) {
-            return $this->replace($indicative) . "-" . md5(hash('sha256', uniqid())) . "." . $this->getExtension($file);
+            return $this->replace($indicative) . '-' . md5(hash('sha256', uniqid())) . '.' . $this->getExtension($file);
         } else {
-            return md5(hash('sha256', uniqid())) . "." . $this->getExtension($file);
+            return md5(hash('sha256', uniqid())) . '.' . $this->getExtension($file);
         }
     }
 
@@ -271,12 +288,14 @@ class Store
 
         if (!move_uploaded_file($tmpName, $this->normalizePath("{$path}{$name}"))) {
             return (object) [
+                'code' => 500,
                 'status' => 'error',
                 'message' => "The file '{$name}' was not loaded",
             ];
         }
 
         return (object) [
+            'code' => 200,
             'status' => 'success',
             'message' => "The file '{$name}' was uploaded",
         ];
@@ -337,11 +356,13 @@ class Store
         if ($requestExist->status === 'error') {
             if (mkdir($path, 0777, true)) {
                 return (object) [
+                    'code' => 200,
                     'status' => 'success',
                     'message' => "Directory '{$path}' created",
                 ];
             } else {
                 return (object) [
+                    'code' => 500,
                     'status' => 'error',
                     'message' => "Directory '{$path}' not created",
                 ];
@@ -349,6 +370,7 @@ class Store
         }
 
         return (object) [
+            'code' => 200,
             'status' => 'success',
             'message' => $requestExist->message,
         ];
@@ -369,15 +391,15 @@ class Store
 
             if (!in_array($fileExtension, $exts)) {
                 return (object) [
+                    'code' => 500,
                     'status' => 'error',
                     'message' => "The file '{$file}' does not have the required extension",
                 ];
-
-                break;
             }
         }
 
         return (object) [
+            'code' => 200,
             'status' => 'success',
             'message' => 'Files have required extension',
         ];
