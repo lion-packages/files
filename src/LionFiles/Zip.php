@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Lion\Files;
 
+use Exception;
 use Lion\Files\Store;
 use ZipArchive;
 
@@ -111,7 +112,7 @@ class Zip
 
         $this->zipArchive->addFile($filePath, $this->store->getBasename($name));
 
-        array_push($this->deleteFiles, $filePath);
+        $this->deleteFiles[] = $filePath;
 
         return $this;
     }

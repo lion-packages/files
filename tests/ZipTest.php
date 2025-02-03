@@ -4,16 +4,19 @@ declare(strict_types=1);
 
 namespace Tests;
 
+use Exception;
 use Lion\Files\Store;
 use Lion\Files\Zip;
 use Lion\Test\Test;
+use PHPUnit\Framework\Attributes\Test as Testing;
 
 class ZipTest extends Test
 {
-    const URL_PATH = './storage/';
-    const ZIP_NAME = 'zip_file.zip';
-    const ZIP_NEW_NAME = 'new_zip_file.zip';
-    const TO = './storage/example/';
+    private const string URL_PATH = './storage/';
+    private const string ZIP_NAME = 'zip_file.zip';
+    private const string ZIP_NEW_NAME = 'new_zip_file.zip';
+    private const string TO = self::URL_PATH . 'example/';
+    private const string LICENSE_PATH = './LICENSE';
 
     private Store $store;
     private Zip $zip;
@@ -21,6 +24,7 @@ class ZipTest extends Test
     protected function setUp(): void
     {
         $this->zip = new Zip();
+
         $this->store = new Store();
 
         $this->createDirectory(self::URL_PATH);
@@ -31,11 +35,18 @@ class ZipTest extends Test
         $this->rmdirRecursively(self::URL_PATH);
     }
 
-    public function testDecompress(): void
+    /**
+     * @throws Exception
+     */
+    #[Testing]
+    public function decompress(): void
     {
-        $this->store->folder(self::URL_PATH);
-
-        $this->zip->create(self::URL_PATH . self::ZIP_NAME)->add(['./LICENSE'])->save();
+        $this->zip
+            ->create(self::URL_PATH . self::ZIP_NAME)
+            ->add([
+                self::LICENSE_PATH,
+            ])
+            ->save();
 
         $this->assertFileExists(self::URL_PATH . self::ZIP_NAME);
 
@@ -46,16 +57,35 @@ class ZipTest extends Test
         $this->assertDirectoryExists(self::TO);
     }
 
-    public function testCreate(): void
+    /**
+     * @throws Exception
+     */
+    #[Testing]
+    public function create(): void
     {
-        $this->zip->create(self::URL_PATH . self::ZIP_NAME)->add(['./LICENSE'])->save();
+        $this->zip
+            ->create(self::URL_PATH . self::ZIP_NAME)
+            ->add([
+                self::LICENSE_PATH,
+            ])
+            ->save();
 
         $this->assertFileExists(self::URL_PATH . self::ZIP_NAME);
     }
 
-    public function testAdd(): void
+    /**
+     * @throws Exception
+     */
+    #[Testing]
+    public function add(): void
     {
-        $this->zip->create(self::URL_PATH . self::ZIP_NEW_NAME)->add(['./LICENSE', './README.md'])->save();
+        $this->zip
+            ->create(self::URL_PATH . self::ZIP_NEW_NAME)
+            ->add([
+                self::LICENSE_PATH,
+                './.github/README.md',
+            ])
+            ->save();
 
         $this->assertFileExists(self::URL_PATH . self::ZIP_NEW_NAME);
     }
