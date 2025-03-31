@@ -55,6 +55,7 @@ class ZipTest extends Test
         $this->zip->decompress(self::URL_PATH . self::ZIP_NAME, self::TO);
 
         $this->assertDirectoryExists(self::TO);
+        $this->assertFileExists(self::TO . self::LICENSE_PATH);
     }
 
     /**

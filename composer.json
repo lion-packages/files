@@ -15,7 +15,8 @@
     },
     "require": {
         "php": ">=8.4",
-        "ext-mbstring": "*"
+        "ext-mbstring": "*",
+        "ext-zip": "*"
     },
     "require-dev": {
         "lion/test": "^3.2",

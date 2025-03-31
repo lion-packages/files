@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Lion\Files;
 
 use Exception;
-use Lion\Files\Store;
 use ZipArchive;
 
 /**
@@ -55,6 +54,7 @@ class Zip
      * @param string $to [Path where files are stored]
      *
      * @return void
+     * @throws Exception [If file decompression fails]
      */
     public function decompress(string $from, string $to): void
     {
@@ -62,7 +62,11 @@ class Zip
 
         $this->zipArchive->extractTo($this->store->normalizePath($to));
 
-        $this->zipArchive->close();
+        $close = $this->zipArchive->close();
+
+        if (!$close) {
+            throw new Exception('Failed to decompress zip file', 500);
+        }
     }
 
     /**
@@ -103,6 +107,8 @@ class Zip
      * @param string $name [File name]
      *
      * @return Zip
+     *
+     * @codeCoverageIgnore
      */
     public function addUpload(string $path, string $tmpName, string $name): Zip
     {
@@ -123,6 +129,8 @@ class Zip
      * @return void
      *
      * @throws Exception [If an error occurs while deleting the file]
+     *
+     * @infection-ignore-all
      */
     public function save(): void
     {

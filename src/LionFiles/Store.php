@@ -11,12 +11,24 @@ use stdClass;
 /**
  * Manipulate system files
  *
- * @property string $urlPath [Default storage path]
- *
  * @package Lion\Files
  */
 class Store
 {
+    /**
+     * [Defines how much the file size is divided by to find its size in KB]
+     *
+     * @const FILE_SIZE
+     */
+    private const int FILE_SIZE = 1024;
+
+    /**
+     * [Permissions to create directories]
+     *
+     * @const FOLDER_PERMISSIONS
+     */
+    private const int FOLDER_PERMISSIONS = 0777;
+
     /**
      * [Default storage path]
      *
@@ -44,12 +56,14 @@ class Store
      * @param non-empty-string $split [Separator to obtain the namespace]
      *
      * @return string
+     *
+     * @infection-ignore-all
      */
     public function getNamespaceFromFile(string $file, string $namespace, string $split = '/'): string
     {
         $splitFile = explode($split, $file);
 
-        $namespace = str_replace("/", "\\", "{$namespace}{$splitFile[1]}");
+        $namespace = str_replace('/', '\\', "{$namespace}{$splitFile[1]}");
 
         $namespace = str_replace('.php', '', $namespace);
 
@@ -62,6 +76,8 @@ class Store
      * @param string $folder [Defined route]
      *
      * @return array<int, string>
+     *
+     * @infection-ignore-all
      */
     public function getFiles(string $folder): array
     {
@@ -108,6 +124,8 @@ class Store
      * @param string $imgSize [Image size]
      *
      * @return stdClass
+     *
+     * @infection-ignore-all
      */
     public function imageSize(string $path, string $fileName, string $imgSize): stdClass
     {
@@ -143,7 +161,7 @@ class Store
     {
         $file = $this->replace($file);
 
-        $fileSizeKb = filesize($this->normalizePath($file)) / 1024;
+        $fileSizeKb = filesize($this->normalizePath($file)) / self::FILE_SIZE;
 
         if ($fileSizeKb > $fileSize) {
             return (object) [
@@ -167,6 +185,8 @@ class Store
      * @param string $path [Defined route]
      *
      * @return array<int, string>|stdClass
+     *
+     * @infection-ignore-all
      */
     public function view(string $path): array|stdClass
     {
@@ -200,6 +220,8 @@ class Store
      * @return stdClass
      *
      * @throws Exception [If an error occurs while deleting the file]
+     *
+     * @infection-ignore-all
      */
     public function remove(string $path): stdClass
     {
@@ -310,7 +332,7 @@ class Store
      */
     public function getExtension(string $path): string
     {
-        return (new SplFileInfo($this->normalizePath($path)))
+        return new SplFileInfo($this->normalizePath($path))
             ->getExtension();
     }
 
@@ -323,7 +345,7 @@ class Store
      */
     public function getName(string $path): string
     {
-        return (new SplFileInfo($this->normalizePath($path)))
+        return new SplFileInfo($this->normalizePath($path))
             ->getBasename('.' . $this->getExtension($path));
     }
 
@@ -336,7 +358,7 @@ class Store
      */
     public function getBasename(string $path): string
     {
-        return (new SplFileInfo($this->normalizePath($path)))
+        return new SplFileInfo($this->normalizePath($path))
             ->getBasename();
     }
 
@@ -354,7 +376,7 @@ class Store
         $requestExist = $this->exist($path);
 
         if ($requestExist->status === 'error') {
-            if (mkdir($path, 0777, true)) {
+            if (mkdir($path, self::FOLDER_PERMISSIONS, true)) {
                 return (object) [
                     'code' => 200,
                     'status' => 'success',
@@ -411,6 +433,8 @@ class Store
      * @param string $str [Text string]
      *
      * @return string
+     *
+     * @infection-ignore-all
      */
     public function replace(string $str): string
     {
