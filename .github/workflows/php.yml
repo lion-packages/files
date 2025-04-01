@@ -108,7 +108,7 @@ jobs:
           fail-on-severity: critical
           license-check: true
 
-  code-analize-php-stan:
+  code-analysis-php-stan:
     runs-on: ubuntu-latest
     name: PHPStan
     needs:
@@ -144,7 +144,7 @@ jobs:
       - name: PHPStan (Tests)
         run: php -d memory_limit=-1 vendor/bin/phpstan analyse --level max tests
 
-  code-analize-php-codesniffer:
+  code-analysis-php-codesniffer:
     runs-on: ubuntu-latest
     name: PHP Code Sniffer
     needs:
@@ -220,8 +220,8 @@ jobs:
     runs-on: ubuntu-latest
     name: PHPUnit
     needs:
-      - code-analize-php-stan
-      - code-analize-php-codesniffer
+      - code-analysis-php-stan
+      - code-analysis-php-codesniffer
       - code-analysis-phplint
 
     steps:
@@ -262,3 +262,38 @@ jobs:
         with:
           files: tests/build/logs/clover.xml
           token: ${{ secrets.CODECOV_TOKEN_LION_FILES }}
+
+  tests-infection:
+    runs-on: ubuntu-latest
+    name: Infection
+    needs:
+      - code-analysis-php-stan
+      - code-analysis-php-codesniffer
+      - code-analysis-phplint
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.4
+          extensions: mbstring, gd, zip
+
+      - name: Restore composer.lock from cache
+        uses: actions/cache@v4
+        with:
+          path: composer.lock
+          key: php-composer-lock-${{ runner.os }}-${{ github.run_id }}
+          restore-keys: php-composer-lock-${{ runner.os }}-${{ github.run_id }}
+
+      - name: Restore vendor directory from cache
+        uses: actions/cache@v4
+        with:
+          path: vendor
+          key: php-vendor-${{ runner.os }}-${{ github.run_id }}
+          restore-keys: php-vendor-${{ runner.os }}-${{ github.run_id }}
+
+      - name: Run tests (Infection)
+        run: php -d memory_limit=-1 vendor/bin/infection --show-mutations
