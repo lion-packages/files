@@ -7,13 +7,16 @@ namespace Tests;
 use Exception;
 use Lion\Files\Store;
 use Lion\Test\Test;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test as Testing;
 use stdClass;
 use Tests\Providers\CustomClassProvider;
+use Tests\Providers\StoreProviderTrait;
 
 class StoreTest extends Test
 {
-    private const string URL_PATH = './storage/';
+    use StoreProviderTrait;
+
     private const string PROVIDERS_URL_PATH = './tests/Providers/';
     private const string IMAGE_SIZE = '100x100';
     private const string FILE_NAME = 'image.png';
@@ -48,11 +51,76 @@ class StoreTest extends Test
         $this->assertSame(CustomClassProvider::class, $namespace);
     }
 
+    /**
+     * @param string $path
+     * @param array<int|string, mixed>|string $content
+     * @param string $return
+     *
+     * @return void
+     */
+    #[Testing]
+    #[DataProvider('createProvider')]
+    public function create(string $path, array|string $content, string $return): void
+    {
+        $response = $this->store->create($path, $content);
+
+        $this->assertObjectHasProperty('code', $response);
+        $this->assertObjectHasProperty('status', $response);
+        $this->assertObjectHasProperty('message', $response);
+        $this->assertIsInt($response->code);
+        $this->assertIsString($response->status);
+        $this->assertIsString($response->message);
+        $this->assertSame(200, $response->code);
+        $this->assertSame('success', $response->status);
+        $this->assertSame('File created', $response->message);
+
+        $fileContent = $this->store->get($path);
+
+        $this->assertSame($return, $fileContent);
+    }
+
+    #[Testing]
+    public function createJsonFileContentNotIsString(): void
+    {
+        $invalidData = fopen('php://memory', 'r');
+
+        $response = $this->store->create(self::URL_PATH . 'file.json', $invalidData);
+
+        $this->assertObjectHasProperty('code', $response);
+        $this->assertObjectHasProperty('status', $response);
+        $this->assertObjectHasProperty('message', $response);
+        $this->assertIsInt($response->code);
+        $this->assertIsString($response->status);
+        $this->assertIsString($response->message);
+        $this->assertSame(500, $response->code);
+        $this->assertSame('error', $response->status);
+        $this->assertSame('Error while creating file', $response->message);
+    }
+
+    #[Testing]
+    public function createJsonFileWithJsonContentIsNotValid(): void
+    {
+        $invalidData = fopen('php://memory', 'r');
+
+        $response = $this->store->create(self::URL_PATH . 'file.json', [$invalidData]);
+
+        $this->assertObjectHasProperty('code', $response);
+        $this->assertObjectHasProperty('status', $response);
+        $this->assertObjectHasProperty('message', $response);
+        $this->assertIsInt($response->code);
+        $this->assertIsString($response->status);
+        $this->assertIsString($response->message);
+        $this->assertSame(500, $response->code);
+        $this->assertSame('error', $response->status);
+        $this->assertSame('Error while creating JSON file', $response->message);
+    }
+
     #[Testing]
     public function getFiles(): void
     {
         $providerFiles = [
             __DIR__ . '/Providers/CustomClassProvider.php',
+            __DIR__ . '/Providers/StoreProviderTrait.php',
         ];
 
         $files = $this->store->getFiles(self::PROVIDERS_URL_PATH);
@@ -73,7 +141,6 @@ class StoreTest extends Test
 
         $response = $this->store->imageSize(self::URL_PATH, self::FILE_NAME, self::IMAGE_SIZE);
 
-        $this->assertInstanceOf(stdClass::class, $response);
         $this->assertObjectHasProperty('code', $response);
         $this->assertObjectHasProperty('status', $response);
         $this->assertObjectHasProperty('message', $response);
@@ -96,7 +163,6 @@ class StoreTest extends Test
 
         $response = $this->store->imageSize(self::URL_PATH, self::FILE_NAME, self::IMAGE_SIZE);
 
-        $this->assertInstanceOf(stdClass::class, $response);
         $this->assertObjectHasProperty('code', $response);
         $this->assertObjectHasProperty('status', $response);
         $this->assertObjectHasProperty('message', $response);
@@ -123,7 +189,6 @@ class StoreTest extends Test
 
         $response = $this->store->size($file, $size);
 
-        $this->assertInstanceOf(stdClass::class, $response);
         $this->assertObjectHasProperty('code', $response);
         $this->assertObjectHasProperty('status', $response);
         $this->assertObjectHasProperty('message', $response);
@@ -144,7 +209,6 @@ class StoreTest extends Test
 
         $response = $this->store->size($file, 0.2);
 
-        $this->assertInstanceOf(stdClass::class, $response);
         $this->assertObjectHasProperty('code', $response);
         $this->assertObjectHasProperty('status', $response);
         $this->assertObjectHasProperty('message', $response);
@@ -198,7 +262,6 @@ class StoreTest extends Test
 
         $response = $this->store->remove($file);
 
-        $this->assertInstanceOf(stdClass::class, $response);
         $this->assertObjectHasProperty('code', $response);
         $this->assertObjectHasProperty('status', $response);
         $this->assertObjectHasProperty('message', $response);
@@ -220,7 +283,6 @@ class StoreTest extends Test
 
         $response = $this->store->remove($file);
 
-        $this->assertInstanceOf(stdClass::class, $response);
         $this->assertObjectHasProperty('code', $response);
         $this->assertObjectHasProperty('status', $response);
         $this->assertObjectHasProperty('message', $response);
@@ -237,7 +299,6 @@ class StoreTest extends Test
     {
         $response = $this->store->exist(self::URL_PATH);
 
-        $this->assertInstanceOf(stdClass::class, $response);
         $this->assertObjectHasProperty('code', $response);
         $this->assertObjectHasProperty('status', $response);
         $this->assertObjectHasProperty('message', $response);
@@ -258,7 +319,6 @@ class StoreTest extends Test
 
         $response = $this->store->exist($file);
 
-        $this->assertInstanceOf(stdClass::class, $response);
         $this->assertObjectHasProperty('code', $response);
         $this->assertObjectHasProperty('status', $response);
         $this->assertObjectHasProperty('message', $response);
@@ -277,7 +337,6 @@ class StoreTest extends Test
 
         $response = $this->store->exist($file);
 
-        $this->assertInstanceOf(stdClass::class, $response);
         $this->assertObjectHasProperty('code', $response);
         $this->assertObjectHasProperty('status', $response);
         $this->assertObjectHasProperty('message', $response);
@@ -328,7 +387,6 @@ class StoreTest extends Test
 
         $response = $this->store->folder(self::URL_PATH);
 
-        $this->assertInstanceOf(stdClass::class, $response);
         $this->assertObjectHasProperty('code', $response);
         $this->assertObjectHasProperty('status', $response);
         $this->assertObjectHasProperty('message', $response);
@@ -346,7 +404,6 @@ class StoreTest extends Test
     {
         $response = $this->store->folder(self::URL_PATH);
 
-        $this->assertInstanceOf(stdClass::class, $response);
         $this->assertObjectHasProperty('code', $response);
         $this->assertObjectHasProperty('status', $response);
         $this->assertObjectHasProperty('message', $response);
@@ -364,7 +421,6 @@ class StoreTest extends Test
     {
         $response = $this->store->validate([self::FILE_NAME], self::EXTENSIONS);
 
-        $this->assertInstanceOf(stdClass::class, $response);
         $this->assertObjectHasProperty('code', $response);
         $this->assertObjectHasProperty('status', $response);
         $this->assertObjectHasProperty('message', $response);
@@ -381,7 +437,6 @@ class StoreTest extends Test
     {
         $response = $this->store->validate([self::FILE_NAME], ['php']);
 
-        $this->assertInstanceOf(stdClass::class, $response);
         $this->assertObjectHasProperty('code', $response);
         $this->assertObjectHasProperty('status', $response);
         $this->assertObjectHasProperty('message', $response);

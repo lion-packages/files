@@ -53,7 +53,7 @@ class Store
      *
      * @param string $file [File path]
      * @param string $namespace [Namespace for the file]
-     * @param non-empty-string $split [Separator to obtain the namespace]
+     * @param non-empty-string $split [Separator to get the namespace]
      *
      * @return string
      *
@@ -68,6 +68,50 @@ class Store
         $namespace = str_replace('.php', '', $namespace);
 
         return trim($namespace);
+    }
+
+    /**
+     * Creates a file of any type (e.g., txt, json, log) with the given content.
+     *
+     * If the file extension is .json and the content is an array, it will be
+     * automatically encoded as JSON.
+     *
+     * @param string $path    Full path to the file, including name and extension.
+     * @param mixed  $content Content to write to the file. Can be a string or an
+     *                        array (for JSON).
+     *
+     * @return stdClass
+     */
+
+    public function create(string $path, mixed $content): stdClass
+    {
+        $extension = pathinfo($path, PATHINFO_EXTENSION);
+
+        if ($extension === 'json' && is_array($content)) {
+            $content = json_encode($content, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+
+            if ($content === false) {
+                return (object) [
+                    'code' => 500,
+                    'status' => 'error',
+                    'message' => 'Error while creating JSON file',
+                ];
+            }
+        } elseif (!is_string($content)) {
+            return (object) [
+                'code' => 500,
+                'status' => 'error',
+                'message' => 'Error while creating file',
+            ];
+        }
+
+        file_put_contents($path, $content);
+
+        return (object) [
+            'code' => 200,
+            'status' => 'success',
+            'message' => 'File created',
+        ];
     }
 
     /**
