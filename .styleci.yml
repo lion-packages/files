@@ -1,4 +1,4 @@
-preset: symfony
+preset: psr12
 
 risky: true
 

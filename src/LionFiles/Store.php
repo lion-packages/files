@@ -105,7 +105,7 @@ class Store
             ];
         }
 
-        file_put_contents($path, $content) !== false;
+        file_put_contents($path, $content);
 
         return (object) [
             'code' => 200,
