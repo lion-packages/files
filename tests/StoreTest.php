@@ -93,7 +93,7 @@ class StoreTest extends Test
         $this->assertIsString($response->status);
         $this->assertIsString($response->message);
         $this->assertSame(500, $response->code);
-        $this->assertSame('error', $response->status);
+        $this->assertSame('file-error', $response->status);
         $this->assertSame('Error while creating file', $response->message);
     }
 
@@ -111,7 +111,7 @@ class StoreTest extends Test
         $this->assertIsString($response->status);
         $this->assertIsString($response->message);
         $this->assertSame(500, $response->code);
-        $this->assertSame('error', $response->status);
+        $this->assertSame('file-error', $response->status);
         $this->assertSame('Error while creating JSON file', $response->message);
     }
 
@@ -170,7 +170,7 @@ class StoreTest extends Test
         $this->assertIsString($response->status);
         $this->assertIsString($response->message);
         $this->assertSame(500, $response->code);
-        $this->assertSame('error', $response->status);
+        $this->assertSame('file-error', $response->status);
 
         $this->assertSame(
             "The file '" . self::FILE_NAME . "' does not have the requested dimensions '" . self::IMAGE_SIZE . "'",
@@ -216,7 +216,7 @@ class StoreTest extends Test
         $this->assertIsString($response->status);
         $this->assertIsString($response->message);
         $this->assertSame(500, $response->code);
-        $this->assertSame('error', $response->status);
+        $this->assertSame('file-error', $response->status);
         $this->assertSame("The file '{$file}' is larger than the requested size", $response->message);
     }
 
@@ -246,7 +246,7 @@ class StoreTest extends Test
         $this->assertIsString($response->status);
         $this->assertIsString($response->message);
         $this->assertSame(500, $response->code);
-        $this->assertSame('error', $response->status);
+        $this->assertSame('file-error', $response->status);
         $this->assertSame("The file/folder './example/' does not exist", $response->message);
     }
 
@@ -290,7 +290,7 @@ class StoreTest extends Test
         $this->assertIsString($response->status);
         $this->assertIsString($response->message);
         $this->assertSame(500, $response->code);
-        $this->assertSame('error', $response->status);
+        $this->assertSame('file-error', $response->status);
         $this->assertSame("The file '{$file}' could not be removed because it does not exist", $response->message);
     }
 
@@ -344,7 +344,7 @@ class StoreTest extends Test
         $this->assertIsString($response->status);
         $this->assertIsString($response->message);
         $this->assertSame(500, $response->code);
-        $this->assertSame('error', $response->status);
+        $this->assertSame('file-error', $response->status);
         $this->assertSame("The file/folder '{$file}' does not exist", $response->message);
     }
 
@@ -444,7 +444,7 @@ class StoreTest extends Test
         $this->assertIsString($response->status);
         $this->assertIsString($response->message);
         $this->assertSame(500, $response->code);
-        $this->assertSame('error', $response->status);
+        $this->assertSame('file-error', $response->status);
         $this->assertSame(
             "The file '" . self::FILE_NAME . "' does not have the required extension",
             $response->message
