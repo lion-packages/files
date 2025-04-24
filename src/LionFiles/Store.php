@@ -93,14 +93,14 @@ class Store
             if ($content === false) {
                 return (object) [
                     'code' => 500,
-                    'status' => 'error',
+                    'status' => 'file-error',
                     'message' => 'Error while creating JSON file',
                 ];
             }
         } elseif (!is_string($content)) {
             return (object) [
                 'code' => 500,
-                'status' => 'error',
+                'status' => 'file-error',
                 'message' => 'Error while creating file',
             ];
         }
@@ -181,7 +181,7 @@ class Store
         if ($union != $imgSize) {
             return (object) [
                 'code' => 500,
-                'status' => 'error',
+                'status' => 'file-error',
                 'message' => "The file '{$fileName}' does not have the requested dimensions '{$imgSize}'",
             ];
         }
@@ -210,7 +210,7 @@ class Store
         if ($fileSizeKb > $fileSize) {
             return (object) [
                 'code' => 500,
-                'status' => 'error',
+                'status' => 'file-error',
                 'message' => "The file '{$file}' is larger than the requested size",
             ];
         }
@@ -236,7 +236,7 @@ class Store
     {
         $responseExist = $this->exist($this->normalizePath($path));
 
-        if ('error' === $responseExist->status) {
+        if ('file-error' === $responseExist->status) {
             return $responseExist;
         }
 
@@ -271,10 +271,10 @@ class Store
     {
         $exist = $this->exist($this->normalizePath($path));
 
-        if ('error' === $exist->status) {
+        if ('file-error' === $exist->status) {
             return (object) [
                 'code' => 500,
-                'status' => 'error',
+                'status' => 'file-error',
                 'message' => "The file '{$path}' could not be removed because it does not exist",
             ];
         }
@@ -290,7 +290,7 @@ class Store
         } catch (Exception $e) {
             return (object) [
                 'code' => $e->getCode(),
-                'status' => 'error',
+                'status' => 'file-error',
                 'message' => $e->getMessage(),
             ];
         }
@@ -308,7 +308,7 @@ class Store
         if (!file_exists($this->normalizePath($path))) {
             return (object) [
                 'code' => 500,
-                'status' => 'error',
+                'status' => 'file-error',
                 'message' => "The file/folder '{$path}' does not exist",
             ];
         }
@@ -321,10 +321,10 @@ class Store
     }
 
     /**
-     * Renames a file and allows adding a callsign to it
+     * Renames a file and allows adding a call sign to it
      *
      * @param string $file [File]
-     * @param string|null $indicative [File initial callsign]
+     * @param string|null $indicative [File initial call sign]
      *
      * @return string
      */
@@ -355,7 +355,7 @@ class Store
         if (!move_uploaded_file($tmpName, $this->normalizePath("{$path}{$name}"))) {
             return (object) [
                 'code' => 500,
-                'status' => 'error',
+                'status' => 'file-error',
                 'message' => "The file '{$name}' was not loaded",
             ];
         }
@@ -419,7 +419,7 @@ class Store
 
         $requestExist = $this->exist($path);
 
-        if ($requestExist->status === 'error') {
+        if ($requestExist->status === 'file-error') {
             if (mkdir($path, self::FOLDER_PERMISSIONS, true)) {
                 return (object) [
                     'code' => 200,
@@ -429,7 +429,7 @@ class Store
             } else {
                 return (object) [
                     'code' => 500,
-                    'status' => 'error',
+                    'status' => 'file-error',
                     'message' => "Directory '{$path}' not created",
                 ];
             }
@@ -458,7 +458,7 @@ class Store
             if (!in_array($fileExtension, $exts)) {
                 return (object) [
                     'code' => 500,
-                    'status' => 'error',
+                    'status' => 'file-error',
                     'message' => "The file '{$file}' does not have the required extension",
                 ];
             }
