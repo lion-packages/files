@@ -456,6 +456,7 @@ class StoreTest extends Test
     {
         $res = mb_convert_encoding('Ã¡Ã©Ã­Ã³ÃºÃ±', 'ISO-8859-1', 'UTF-8');
 
+        $this->assertIsString($res);
         $this->assertSame('áéíóúñ', $this->store->replace($res));
     }
 }
