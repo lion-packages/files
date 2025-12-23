@@ -1,14 +1,4 @@
-# 🦁 Lion-Files
-
-<p align="center">
-  <a href="https://dev.lion-packages.com/docs/library/content" target="_blank">
-    <img 
-        src="https://github.com/lion-packages/framework/assets/56183278/60871c9f-1c93-4481-8c1e-d70282b33254"
-        width="450" 
-        alt="Lion-packages Logo"
-    >
-  </a>
-</p>
+<img width="1920" height="1080" alt="presentation-lion-packages" src="https://github.com/user-attachments/assets/5dd03366-fead-4b7a-ad3e-65e7b9206c64" />
 
 <p align="center">
   <a href="https://packagist.org/packages/lion/files">
