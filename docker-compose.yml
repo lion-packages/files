@@ -1,6 +1,6 @@
 services:
-    app:
-        container_name: files-app
+    php:
+        container_name: files-php
         build:
             context: .
             dockerfile: Dockerfile
