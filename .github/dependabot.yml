@@ -8,7 +8,9 @@ multi-ecosystem-groups:
       timezone: "America/Bogota"
 
 updates:
-  # Composer (PHP)
+  # ========================
+  # Maintenance - PHP
+  # ========================
   - package-ecosystem: "composer"
     directory: "/"
     patterns: ["*"]
@@ -16,3 +18,16 @@ updates:
     labels:
       - "php"
       - "dependencies"
+
+  # ========================
+  # Security - PHP
+  # ========================
+  - package-ecosystem: "composer"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 3
+    rebase-strategy: "auto"
+    labels:
+      - "php"
+      - "security"
